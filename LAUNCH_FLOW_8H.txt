@@ -1,0 +1,14 @@
+LAUNCH FLOW
+===========
+1. User presses Launch.
+2. Website fetches guild information and shows it first.
+3. udp/gen.py generates exactly 4 guest accounts using 4 threads.
+4. Generated accounts.json is validated for 4 UID/password entries.
+5. Four join requests are sent in parallel.
+6. Each account shows Join Success or Join Failed.
+7. The UDP app.py is started from the udp folder.
+8. The web launcher calls /api/glory/start so the already-joined accounts start Glory without sending join requests a second time.
+9. Live Glory is read from the UDP worker and shown on the Bot Instances card.
+10. The Glory runtime is 8 hours, then the UDP process is stopped automatically.
+
+The launch-progress card is placed directly below Bot Instances on the dashboard instead of opening a separate fullscreen screen.

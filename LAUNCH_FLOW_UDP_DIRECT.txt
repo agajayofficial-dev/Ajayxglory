@@ -1,0 +1,9 @@
+DIRECT UDP LAUNCH FLOW
+1. Receive Guild ID + Region.
+2. Call the Guild Info API with those values.
+3. Use the supplied udp/gen.py through udp/launch_runner.py, in the udp folder itself.
+4. Generate exactly 4 accounts with 4 threads; accounts.json is created in udp/.
+5. Send 4 join requests.
+6. Start the supplied udp/app.py from the same udp folder.
+7. Start Glory and monitor the UDP app for 8 hours.
+8. No per-run copy of the UDP project is used.

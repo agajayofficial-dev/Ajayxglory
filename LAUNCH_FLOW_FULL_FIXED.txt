@@ -1,0 +1,11 @@
+LAUNCH FLOW - FULL FIXED
+1. Request guild information from the configured Guild API.
+2. If that upstream API temporarily says "No working account for region",
+   the launch is NOT blocked. A partial guild record is shown and the launch continues.
+3. Run udp/launch_runner.py with --total 4 --threads 4 --fresh.
+4. launch_runner.py invokes udp/gen.py and verifies 4 generated accounts.
+5. Send 4 join requests in parallel.
+6. Start udp/app.py exactly once. The join stage is not repeated.
+7. Start the UDP Glory workers.
+8. Monitor live Glory and member count.
+9. Keep the run active for 8 hours, then stop the UDP process.
