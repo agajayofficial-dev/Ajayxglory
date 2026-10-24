@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Panel - ClanBoost Pro</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0c15; color: #e2e8f0; min-height: 100vh; }
+        :root { --primary: #3b82f6; --primary-dark: #2563eb; --primary-light: #60a5fa; --bg-dark: #0a0c15; --bg-card: #0f111a; --bg-elevated: #151821; --border-dim: #1e2130; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        .ng-card { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 20px; transition: all 0.3s ease; }
+        .ng-card:hover { border-color: var(--primary); box-shadow: 0 8px 25px -10px rgba(59, 130, 246, 0.2); }
+        .ng-input { background: var(--bg-elevated); border: 1px solid var(--border-dim); border-radius: 12px; padding: 0.75rem 1rem; width: 100%; color: #e2e8f0; transition: all 0.3s ease; }
+        .ng-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .ng-btn-primary { background: var(--primary); border: none; border-radius: 12px; padding: 0.75rem 1.5rem; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .ng-btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .ng-btn-outline { background: transparent; border: 1px solid var(--border-dim); border-radius: 12px; padding: 0.75rem 1.5rem; color: #94a3b8; font-weight: 500; cursor: pointer; transition: all 0.3s ease; }
+        .ng-btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .ng-btn-success { background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 12px; padding: 0.75rem 1.5rem; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .ng-btn-success:hover { transform: translateY(-2px); }
+        .ng-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 500; }
+        .ng-badge-blue { background: rgba(59, 130, 246, 0.15); color: var(--primary-light); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .ng-badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .ng-badge-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .ng-badge-yellow { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .ng-section-title { display: flex; align-items: center; gap: 12px; font-size: 1.2rem; font-weight: 600; }
+        .ng-section-icon { width: 36px; height: 36px; background: rgba(59, 130, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .loader { width: 20px; height: 20px; border: 2px solid var(--border-dim); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .nav-item-active { background: rgba(59, 130, 246, 0.1); color: var(--primary-light); border-left: 3px solid var(--primary); }
+        .toast-show { animation: toastIn 0.3s ease-out; }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .stat-card { background: linear-gradient(135deg, #0f111a, #0a0c15); border: 1px solid var(--border-dim); border-radius: 20px; padding: 1.25rem; transition: all 0.3s ease; }
+        .stat-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .order-card { background: linear-gradient(135deg, #1a1d28 0%, #0f111a 100%); border: 1px solid #fbbf2430; border-radius: 20px; transition: all 0.3s ease; overflow: hidden; }
+        .order-card:hover { border-color: #fbbf24; transform: translateY(-2px); }
+        .glory-card { background: linear-gradient(135deg, #1a1d28 0%, #0f111a 100%); border: 1px solid #10b98130; border-radius: 20px; transition: all 0.3s ease; overflow: hidden; }
+        .glory-card:hover { border-color: #10b981; transform: translateY(-2px); }
+        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: 0.3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(22px); }
+        @media (max-width: 768px) { .stat-card { padding: 1rem; } }
+    </style>
+</head>
+<body>
+
+    <div class="flex-grow flex flex-col">
+        <nav class="sticky top-0 z-20 px-4 py-3 bg-[#0f111a]/95 backdrop-blur-lg border-b border-[#1e2130]">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">Admin Panel</h1>
+                    <div class="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-[10px] text-emerald-400 font-medium">ADMIN</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="admin-badge" class="hidden sm:flex ng-badge ng-badge-blue text-xs"><i class="fas fa-user-cog mr-1"></i> <span id="admin-name">Admin</span></span>
+                    <button id="logout-btn" class="ng-btn-outline text-xs px-3 py-1.5 flex items-center gap-1"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="flex-grow p-4 md:p-6 overflow-auto">
+            <div class="flex flex-col lg:flex-row gap-6">
+                <aside class="hidden lg:block w-64 flex-shrink-0">
+                    <div class="ng-card p-2 sticky top-4">
+                        <nav class="space-y-1">
+                            <button onclick="switchTab('dashboard')" id="sidebar-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-chart-pie w-4"></i> Dashboard</button>
+                            <button onclick="switchTab('glory')" id="sidebar-glory" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-trophy w-4"></i> Glory Management</button>
+                            <button onclick="switchTab('orders')" id="sidebar-orders" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-shopping-cart w-4"></i> Orders<span id="orders-badge" class="ml-auto ng-badge ng-badge-yellow text-[10px] hidden">0</span></button>
+                            <button onclick="switchTab('users')" id="sidebar-users" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-users w-4"></i> Users</button>
+                            <button onclick="switchTab('groups')" id="sidebar-groups" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-robot w-4"></i> Bot Groups</button>
+                            <button onclick="switchTab('transactions')" id="sidebar-transactions" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-receipt w-4"></i> Transactions</button>
+                            <button onclick="switchTab('coupons')" id="sidebar-coupons" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-ticket-alt w-4"></i> Generate Coupon</button>
+                        </nav>
+                    </div>
+                </aside>
+
+                <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0f111a]/95 backdrop-blur-lg border-t border-[#1e2130]">
+                    <div class="flex items-center justify-around px-2 py-2">
+                        <button onclick="switchTab('dashboard')" id="mob-dashboard" class="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-gray-400"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px]">Home</span></button>
+                        <button onclick="switchTab('glory')" id="mob-glory" class="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-gray-400"><i class="fas fa-trophy text-lg"></i><span class="text-[10px]">Glory</span></button>
+                        <button onclick="switchTab('orders')" id="mob-orders" class="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-gray-400"><i class="fas fa-shopping-cart text-lg"></i><span class="text-[10px]">Orders</span></button>
+                        <button onclick="switchTab('users')" id="mob-users" class="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-gray-400"><i class="fas fa-users text-lg"></i><span class="text-[10px]">Users</span></button>
+                    </div>
+                </div>
+
+                <div class="flex-1 min-w-0 space-y-6 pb-20 lg:pb-0">
+                    <!-- Dashboard Tab -->
+                    <div id="tab-dashboard" class="tab-content space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="stat-card"><div class="flex items-center justify-between"><div><p class="text-xs text-gray-500 uppercase">Total Users</p><p class="text-2xl font-bold text-white" id="stat-users">0</p></div><div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center"><i class="fas fa-users text-blue-400"></i></div></div></div>
+                            <div class="stat-card"><div class="flex items-center justify-between"><div><p class="text-xs text-gray-500 uppercase">Active Bots</p><p class="text-2xl font-bold text-white" id="stat-groups">0</p></div><div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center"><i class="fas fa-robot text-emerald-400"></i></div></div></div>
+                            <div class="stat-card"><div class="flex items-center justify-between"><div><p class="text-xs text-gray-500 uppercase">Total Glory</p><p class="text-2xl font-bold text-amber-400" id="stat-glory">0</p></div><div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center"><i class="fas fa-trophy text-amber-400"></i></div></div></div>
+                            <div class="stat-card"><div class="flex items-center justify-between"><div><p class="text-xs text-gray-500 uppercase">Pending Orders</p><p class="text-2xl font-bold text-yellow-400" id="stat-orders">0</p></div><div class="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center"><i class="fas fa-clock text-yellow-400"></i></div></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Glory Management Tab -->
+                    <div id="tab-glory" class="tab-content hidden space-y-6">
+                        <div class="ng-card p-5">
+                            <div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-trophy text-amber-400"></i></div><h3 class="text-amber-400">Active Groups - Glory Management</h3><button onclick="loadActiveGroups()" class="ml-auto text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-sync-alt"></i> Refresh</button></div>
+                            <div id="active-groups-list" class="space-y-4"><div class="text-center py-8 text-gray-500"><i class="fas fa-inbox text-4xl mb-2 opacity-50"></i><p>No active groups</p></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Orders Tab -->
+                    <div id="tab-orders" class="tab-content hidden space-y-6">
+                        <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-shopping-cart text-yellow-400"></i></div><h3 class="text-yellow-400">New Orders</h3><span id="orders-count-badge" class="ng-badge ng-badge-yellow text-xs hidden">0</span></div>
+                        <div id="orders-list" class="space-y-4"><div class="text-center py-8 text-gray-500"><i class="fas fa-inbox text-4xl mb-2 opacity-50"></i><p>No pending orders</p></div></div></div>
+                    </div>
+
+                    <!-- Users Tab -->
+                    <div id="tab-users" class="tab-content hidden space-y-6">
+                        <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-users text-blue-400"></i></div><h3>All Users</h3><button onclick="loadUsers()" class="ml-auto text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-sync-alt"></i> Refresh</button></div>
+                        <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="border-b border-[#1e2130]"><tr class="text-left text-gray-500"><th class="pb-2">ID</th><th class="pb-2">Username</th><th class="pb-2">Email</th><th class="pb-2">Basic</th><th class="pb-2">Premium</th><th class="pb-2">Groups</th><th class="pb-2">Role</th><th class="pb-2">Actions</th></tr></thead><tbody id="users-list"></tbody></table></div></div>
+                    </div>
+
+                    <!-- Groups Tab -->
+                    <div id="tab-groups" class="tab-content hidden space-y-6">
+                        <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-robot text-blue-400"></i></div><h3>All Bot Groups</h3><button onclick="loadGroups()" class="ml-auto text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-sync-alt"></i> Refresh</button></div>
+                        <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="border-b border-[#1e2130]"><tr class="text-left text-gray-500"><th class="pb-2">ID</th><th class="pb-2">User</th><th class="pb-2">Guild Name</th><th class="pb-2">Clan ID</th><th class="pb-2">Region</th><th class="pb-2">Level</th><th class="pb-2">Glory</th><th class="pb-2">Target</th><th class="pb-2">Progress</th></tr></thead><tbody id="groups-list"></tbody></table></div></div>
+                    </div>
+
+                    <!-- Transactions Tab -->
+                    <div id="tab-transactions" class="tab-content hidden space-y-6">
+                        <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-receipt text-blue-400"></i></div><h3>All Transactions</h3><button onclick="loadTransactions()" class="ml-auto text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-sync-alt"></i> Refresh</button></div>
+                        <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="border-b border-[#1e2130]"><tr class="text-left text-gray-500"><th class="pb-2">ID</th><th class="pb-2">User</th><th class="pb-2">Amount</th><th class="pb-2">Basic</th><th class="pb-2">Premium</th><th class="pb-2">Status</th><th class="pb-2">Actions</th></tr></thead><tbody id="transactions-list"></tbody></table></div></div>
+                    </div>
+
+                    <!-- Coupons Tab -->
+                    <div id="tab-coupons" class="tab-content hidden space-y-6">
+                        <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-ticket-alt text-blue-400"></i></div><h3>Generate Admin Coupon</h3></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div><label class="text-xs text-gray-400 block mb-1">Basic Credits</label><input type="number" id="coupon-basic" value="0" min="0" max="1000" class="ng-input"></div><div><label class="text-xs text-gray-400 block mb-1">Premium Credits</label><input type="number" id="coupon-premium" value="0" min="0" max="100" class="ng-input"></div></div>
+                        <button onclick="generateAdminCoupon()" class="ng-btn-success w-full py-2.5"><i class="fas fa-plus-circle mr-1"></i> Generate Coupon Code</button>
+                        <div id="generated-coupon" class="mt-4 hidden"><div class="bg-[#1e2130] rounded-xl p-4 text-center"><p class="text-xs text-gray-500 mb-1">Coupon Code Generated</p><code id="coupon-code-display" class="text-xl font-mono font-bold text-blue-400"></code><button onclick="copyCouponCode()" class="ml-2 text-blue-400 hover:text-blue-300"><i class="fas fa-copy"></i></button></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approve Order Modal -->
+    <div id="approve-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-md p-4">
+        <div class="ng-card p-6 max-w-md w-full"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-yellow-400">Approve Order</h3><button onclick="closeApproveModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
+        <div class="space-y-4"><div><label class="text-xs text-gray-400 block mb-1">Guild Name</label><input type="text" id="approve-guild-name" class="ng-input" placeholder="Enter guild name"></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Leader/Captain Name</label><input type="text" id="approve-leader-name" class="ng-input" placeholder="Captain name"></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Bots Running</label><input type="number" id="approve-bot-count" value="6" class="ng-input" placeholder="Number of bots"></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Members (e.g. 7/25)</label><input type="text" id="approve-members" placeholder="7/25" class="ng-input"></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Current Glory</label><input type="number" id="approve-glory" value="0" class="ng-input" placeholder="Current glory"></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Level</label><input type="number" id="approve-level" value="1" class="ng-input" placeholder="Level (1-99)"></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Target Glory (for 8H Goal)</label><input type="number" id="approve-target-glory" value="100000" class="ng-input" placeholder="Target glory"></div>
+        <button id="approve-submit-btn" class="ng-btn-success w-full py-2.5">Approve & Start Bot</button></div></div>
+    </div>
+
+    <!-- Update Glory Modal -->
+    <div id="update-glory-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-md p-4">
+        <div class="ng-card p-6 max-w-md w-full"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-amber-400">Update Glory</h3><button onclick="closeUpdateGloryModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
+        <div class="space-y-4"><div><label class="text-xs text-gray-400 block mb-1">Current Glory</label><p id="update-current-glory" class="text-white font-bold text-lg">0</p></div>
+        <div><label class="text-xs text-gray-400 block mb-1">New Glory Amount</label><input type="number" id="update-glory-amount" class="ng-input" placeholder="Enter new glory amount"></div>
+        <button id="update-glory-btn" class="ng-btn-primary w-full py-2.5">Update Glory</button></div></div>
+    </div>
+
+    <!-- Auto Glory Settings Modal -->
+    <div id="auto-glory-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-md p-4">
+        <div class="ng-card p-6 max-w-md w-full"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-green-400">Auto Glory Settings</h3><button onclick="closeAutoGloryModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
+        <div class="space-y-4"><div class="flex items-center justify-between"><label class="text-sm text-gray-300">Enable Auto Glory</label><label class="switch"><input type="checkbox" id="auto-glory-enabled"><span class="slider"></span></label></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Interval (Minutes)</label><input type="number" id="auto-glory-interval" class="ng-input" value="5" min="1" max="60"></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Amount per Interval</label><input type="number" id="auto-glory-amount" class="ng-input" value="100" min="10" max="10000"></div>
+        <button id="save-auto-glory-btn" class="ng-btn-success w-full py-2.5">Save Settings</button></div></div>
+    </div>
+
+    <!-- Edit Credits Modal -->
+    <div id="edit-credits-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="ng-card p-6 max-w-md w-full"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">Edit User Credits</h3><button onclick="closeEditModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
+        <div class="space-y-4"><div><label class="text-xs text-gray-400 block mb-1">User</label><p id="edit-username" class="text-white font-medium"></p></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Basic Credits</label><input type="number" id="edit-basic" class="ng-input"></div>
+        <div><label class="text-xs text-gray-400 block mb-1">Premium Credits</label><input type="number" id="edit-premium" class="ng-input"></div>
+        <button onclick="saveUserCredits()" class="ng-btn-primary w-full">Save Changes</button></div></div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-20 right-4 z-50 space-y-2"></div>
+
+    <script>
+        let currentOrderId = null, currentGroupId = null, currentAutoGloryGroupId = null;
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = { success: 'bg-green-500/20 border-green-500/30 text-green-400', error: 'bg-red-500/20 border-red-500/30 text-red-400', warning: 'bg-amber-500/20 border-amber-500/30 text-amber-400', info: 'bg-blue-500/20 border-blue-500/30 text-blue-400' };
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-sm ${colors[type]} toast-show`;
+            toast.innerHTML = `<i class="fas ${icons[type]}"></i><span class="text-sm">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100px)'; setTimeout(() => toast.remove(), 300); }, 4000);
+        }
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (!res.ok) { window.location.href = '/login'; return false; }
+                const user = await res.json();
+                if (user.role !== 'admin') { window.location.href = '/home'; return false; }
+                document.getElementById('admin-name').textContent = user.username;
+                return true;
+            } catch (e) { window.location.href = '/login'; return false; }
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin/stats');
+                const data = await res.json();
+                document.getElementById('stat-users').textContent = data.total_users;
+                document.getElementById('stat-groups').textContent = data.active_groups;
+                document.getElementById('stat-glory').textContent = data.total_glory.toLocaleString();
+                document.getElementById('stat-orders').textContent = data.pending_orders || 0;
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadActiveGroups() {
+            try {
+                const res = await fetch('/api/admin/active-groups');
+                const groups = await res.json();
+                const container = document.getElementById('active-groups-list');
+                if (!groups || groups.length === 0) { container.innerHTML = `<div class="text-center py-8 text-gray-500"><i class="fas fa-inbox text-4xl mb-2 opacity-50"></i><p>No active groups</p></div>`; return; }
+                const regionNames = { 'bd': 'Bangladesh', 'in': 'India', 'indo': 'Indonesia', 'br': 'Brazil', 'me': 'Middle East', 'ghrab': 'MENA' };
+                container.innerHTML = groups.map(group => {
+                    const progress = Math.min(Math.floor((group.glory_earned / group.target_glory) * 100), 100);
+                    const autoStatus = group.auto_glory_enabled ? `<span class="text-green-400 text-xs ml-2"><i class="fas fa-play-circle"></i> Auto ON</span>` : `<span class="text-gray-500 text-xs ml-2"><i class="fas fa-pause-circle"></i> Auto OFF</span>`;
+                    return `<div class="glory-card p-4" id="group-${group.id}">
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-center justify-between">
+                                <div><div class="flex items-center gap-2"><i class="fas fa-robot text-green-400"></i><span class="font-bold text-white">${escapeHtml(group.guild_name || group.clan_id)}</span><span class="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">LV.${group.level}</span>${autoStatus}</div>
+                                <div class="text-sm text-gray-400 mt-1">${escapeHtml(group.email)} · ${regionNames[group.region] || group.region.toUpperCase()} · ${group.region_tier === 'premium' ? 'Premium' : 'Basic'}</div></div>
+                                <div class="flex gap-2"><button onclick="openUpdateGloryModal(${group.id}, ${group.glory_earned})" class="px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-xs"><i class="fas fa-edit"></i> Update Glory</button>
+                                <button onclick="openAutoGloryModal(${group.id}, ${group.auto_glory_enabled}, ${group.auto_glory_interval}, ${group.auto_glory_amount})" class="px-3 py-1.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 text-xs"><i class="fas fa-clock"></i> Auto Glory</button></div>
+                            </div>
+                            <div class="flex items-center justify-between text-sm"><span class="text-amber-400">Glory: ${group.glory_earned.toLocaleString()}</span><span class="text-gray-500">Target: ${group.target_glory.toLocaleString()}</span><span class="text-gray-500">8H Goal: ${progress}%</span></div>
+                            <div class="mt-1"><div class="h-2 bg-gray-700 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: ${progress}%"></div></div></div>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (e) { console.error(e); showToast('Failed to load groups', 'error'); }
+        }
+
+        function openUpdateGloryModal(groupId, currentGlory) {
+            currentGroupId = groupId;
+            document.getElementById('update-current-glory').textContent = currentGlory.toLocaleString();
+            document.getElementById('update-glory-amount').value = currentGlory;
+            document.getElementById('update-glory-modal').style.display = 'flex';
+        }
+        function closeUpdateGloryModal() { document.getElementById('update-glory-modal').style.display = 'none'; currentGroupId = null; }
+        document.getElementById('update-glory-btn')?.addEventListener('click', async () => {
+            if (!currentGroupId) return;
+            const newGlory = parseInt(document.getElementById('update-glory-amount').value) || 0;
+            const btn = document.getElementById('update-glory-btn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Updating...';
+            try {
+                const res = await fetch('/api/admin/update-group-glory', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ group_id: currentGroupId, new_glory: newGlory }) });
+                const data = await res.json();
+                if (data.success) { showToast('Glory updated!', 'success'); closeUpdateGloryModal(); loadActiveGroups(); loadGroups(); loadStats(); }
+                else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = originalText; }
+        });
+
+        function openAutoGloryModal(groupId, enabled, interval, amount) {
+            currentAutoGloryGroupId = groupId;
+            document.getElementById('auto-glory-enabled').checked = enabled;
+            document.getElementById('auto-glory-interval').value = interval;
+            document.getElementById('auto-glory-amount').value = amount;
+            document.getElementById('auto-glory-modal').style.display = 'flex';
+        }
+        function closeAutoGloryModal() { document.getElementById('auto-glory-modal').style.display = 'none'; currentAutoGloryGroupId = null; }
+        document.getElementById('save-auto-glory-btn')?.addEventListener('click', async () => {
+            if (!currentAutoGloryGroupId) return;
+            const enabled = document.getElementById('auto-glory-enabled').checked;
+            const interval = parseInt(document.getElementById('auto-glory-interval').value) || 5;
+            const amount = parseInt(document.getElementById('auto-glory-amount').value) || 100;
+            const btn = document.getElementById('save-auto-glory-btn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Saving...';
+            try {
+                const res = await fetch('/api/admin/update-group-auto-glory', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ group_id: currentAutoGloryGroupId, enabled: enabled, interval: interval, amount: amount }) });
+                const data = await res.json();
+                if (data.success) { showToast('Auto glory settings saved!', 'success'); closeAutoGloryModal(); loadActiveGroups(); }
+                else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = originalText; }
+        });
+
+        async function loadOrders() {
+            try {
+                const res = await fetch('/api/admin/pending-orders');
+                const orders = await res.json();
+                const container = document.getElementById('orders-list');
+                const badge = document.getElementById('orders-count-badge');
+                const sidebarBadge = document.getElementById('orders-badge');
+                if (orders && orders.length > 0) {
+                    badge.classList.remove('hidden'); sidebarBadge.classList.remove('hidden');
+                    badge.textContent = orders.length; sidebarBadge.textContent = orders.length;
+                    const regionNames = { 'bd': 'Bangladesh', 'in': 'India', 'indo': 'Indonesia', 'br': 'Brazil', 'me': 'Middle East', 'ghrab': 'MENA' };
+                    container.innerHTML = orders.map(order => `<div class="order-card p-4"><div class="flex flex-col md:flex-row md:items-start justify-between gap-4"><div><div class="flex items-center gap-2 mb-2"><i class="fas fa-flag-checkered text-yellow-400"></i><span class="font-bold text-white">Guild: ${order.clan_id}</span></div><div class="text-sm text-gray-400">${order.email} · ${regionNames[order.region] || order.region.toUpperCase()} · ${order.region_tier === 'premium' ? 'Premium' : 'Basic'} 8h</div><div class="text-xs text-gray-500 mt-1">Order placed: ${new Date(order.created_at).toLocaleString()}</div></div><div class="flex gap-2"><button onclick="openApproveModal(${order.id})" class="px-4 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-sm"><i class="fas fa-check mr-1"></i> Approve</button><button onclick="rejectOrder(${order.id})" class="px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm"><i class="fas fa-times mr-1"></i> Reject</button></div></div></div>`).join('');
+                } else { badge.classList.add('hidden'); sidebarBadge.classList.add('hidden'); container.innerHTML = `<div class="text-center py-8 text-gray-500"><i class="fas fa-inbox text-4xl mb-2 opacity-50"></i><p>No pending orders</p></div>`; }
+            } catch (e) { console.error(e); }
+        }
+
+        function openApproveModal(orderId) { currentOrderId = orderId; document.getElementById('approve-guild-name').value = ''; document.getElementById('approve-leader-name').value = ''; document.getElementById('approve-bot-count').value = '6'; document.getElementById('approve-members').value = ''; document.getElementById('approve-glory').value = '0'; document.getElementById('approve-level').value = '1'; document.getElementById('approve-target-glory').value = '100000'; document.getElementById('approve-modal').style.display = 'flex'; }
+        function closeApproveModal() { document.getElementById('approve-modal').style.display = 'none'; currentOrderId = null; }
+        document.getElementById('approve-submit-btn')?.addEventListener('click', async () => {
+            if (!currentOrderId) return;
+            const guildName = document.getElementById('approve-guild-name').value;
+            const leaderName = document.getElementById('approve-leader-name').value;
+            const botCount = parseInt(document.getElementById('approve-bot-count').value) || 6;
+            const members = document.getElementById('approve-members').value || '0/20';
+            const glory = parseInt(document.getElementById('approve-glory').value) || 0;
+            const level = parseInt(document.getElementById('approve-level').value) || 1;
+            const targetGlory = parseInt(document.getElementById('approve-target-glory').value) || 100000;
+            const btn = document.getElementById('approve-submit-btn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Processing...';
+            try {
+                const res = await fetch('/api/admin/approve-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: currentOrderId, guild_name: guildName, leader_name: leaderName, bot_count: botCount, members: members, glory: glory, level: level, target_glory: targetGlory }) });
+                const data = await res.json();
+                if (res.ok && data.success) { showToast('✅ Order approved!', 'success'); closeApproveModal(); loadOrders(); loadStats(); loadGroups(); loadActiveGroups(); }
+                else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = originalText; }
+        });
+
+        async function rejectOrder(orderId) {
+            if (!confirm('Reject this order? Credits will be refunded.')) return;
+            try {
+                const res = await fetch('/api/admin/reject-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: orderId }) });
+                const data = await res.json();
+                if (res.ok && data.success) { showToast('Order rejected', 'warning'); loadOrders(); loadStats(); }
+                else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                const users = await res.json();
+                document.getElementById('users-list').innerHTML = users.map(user => `<tr class="border-b border-[#1e2130]"><td class="py-2">${user.id}</td><td class="py-2 font-medium">${escapeHtml(user.username)}</td><td class="py-2 text-gray-400">${escapeHtml(user.email)}</td><td class="py-2 text-blue-400">${user.basic_credits}</td><td class="py-2 text-amber-400">${user.premium_credits}</td><td class="py-2">${user.group_count}</td><td class="py-2"><span class="ng-badge ${user.role === 'admin' ? 'ng-badge-yellow' : 'ng-badge-blue'}">${user.role}</span></td><td class="py-2"><button onclick="openEditModal(${user.id}, '${escapeHtml(user.username)}', ${user.basic_credits}, ${user.premium_credits})" class="text-blue-400 hover:text-blue-300"><i class="fas fa-edit"></i></button></td></tr>`).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadGroups() {
+            try {
+                const res = await fetch('/api/admin/groups');
+                const groups = await res.json();
+                document.getElementById('groups-list').innerHTML = groups.map(group => { const progress = Math.min(Math.floor((group.glory_earned / group.target_glory) * 100), 100); return `<tr class="border-b border-[#1e2130]"><td class="py-2">${group.id}</td><td class="py-2">${escapeHtml(group.username)}</td><td class="py-2">${escapeHtml(group.guild_name || '-')}</td><td class="py-2 font-mono">${escapeHtml(group.clan_id)}</td><td class="py-2">${group.region.toUpperCase()}</td><td class="py-2">LV.${group.level}</td><td class="py-2 text-amber-400">${group.glory_earned?.toLocaleString() || 0}</td><td class="py-2 text-gray-400">${group.target_glory?.toLocaleString() || 0}</td><td class="py-2"><div class="w-20 h-1.5 bg-gray-700 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: ${progress}%"></div></div><span class="text-xs text-gray-500">${progress}%</span></td></tr>`; }).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadTransactions() {
+            try {
+                const res = await fetch('/api/admin/transactions');
+                const txs = await res.json();
+                document.getElementById('transactions-list').innerHTML = txs.map(tx => `<tr class="border-b border-[#1e2130]"><td class="py-2">${tx.id}</td><td class="py-2">${escapeHtml(tx.username)}</td><td class="py-2">$${tx.amount.toFixed(2)}</td><td class="py-2 text-blue-400">${tx.basic_credits}</td><td class="py-2 text-amber-400">${tx.premium_credits}</td><td class="py-2"><span class="ng-badge ${tx.status === 'pending' ? 'ng-badge-yellow' : tx.status === 'completed' ? 'ng-badge-green' : 'ng-badge-red'}">${tx.status}</span></td><td class="py-2">${tx.status === 'pending' ? `<button onclick="approveTransaction(${tx.id})" class="text-green-400 hover:text-green-300 mr-2"><i class="fas fa-check"></i></button><button onclick="rejectTransaction(${tx.id})" class="text-red-400 hover:text-red-300"><i class="fas fa-times"></i></button>` : '-'}</td></tr>`).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function approveTransaction(txId) {
+            try {
+                const res = await fetch('/api/admin/transaction/approve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ transaction_id: txId }) });
+                const data = await res.json();
+                if (data.success) { showToast('Transaction approved!', 'success'); loadStats(); loadTransactions(); loadUsers(); }
+                else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+        }
+        async function rejectTransaction(txId) {
+            try {
+                const res = await fetch('/api/admin/transaction/reject', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ transaction_id: txId }) });
+                const data = await res.json();
+                if (data.success) { showToast('Transaction rejected', 'warning'); loadStats(); loadTransactions(); }
+                else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+        }
+
+        let currentEditUserId = null;
+        function openEditModal(userId, username, basic, premium) { currentEditUserId = userId; document.getElementById('edit-username').textContent = username; document.getElementById('edit-basic').value = basic; document.getElementById('edit-premium').value = premium; document.getElementById('edit-credits-modal').style.display = 'flex'; }
+        function closeEditModal() { document.getElementById('edit-credits-modal').style.display = 'none'; currentEditUserId = null; }
+        async function saveUserCredits() {
+            const basic = parseInt(document.getElementById('edit-basic').value) || 0;
+            const premium = parseInt(document.getElementById('edit-premium').value) || 0;
+            try {
+                const res = await fetch('/api/admin/update-credits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: currentEditUserId, basic_credits: basic, premium_credits: premium }) });
+                const data = await res.json();
+                if (data.success) { showToast('Credits updated!', 'success'); closeEditModal(); loadUsers(); }
+                else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+        }
+
+        async function generateAdminCoupon() {
+            const basic = parseInt(document.getElementById('coupon-basic').value) || 0;
+            const premium = parseInt(document.getElementById('coupon-premium').value) || 0;
+            if (basic === 0 && premium === 0) { showToast('Select at least 1 credit', 'error'); return; }
+            try {
+                const res = await fetch('/api/admin/create-coupon', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ basic_credits: basic, premium_credits: premium }) });
+                const data = await res.json();
+                if (data.success) { document.getElementById('coupon-code-display').textContent = data.coupon.code; document.getElementById('generated-coupon').classList.remove('hidden'); showToast('Coupon generated!', 'success'); document.getElementById('coupon-basic').value = 0; document.getElementById('coupon-premium').value = 0; }
+                else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+        }
+        function copyCouponCode() { navigator.clipboard.writeText(document.getElementById('coupon-code-display').textContent); showToast('Copied!', 'success'); }
+
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+        let currentTab = 'dashboard';
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(item => { item.classList.remove('nav-item-active'); item.classList.remove('text-blue-400'); item.classList.add('text-gray-400'); });
+            const sidebarBtn = document.getElementById(`sidebar-${tab}`);
+            if (sidebarBtn) { sidebarBtn.classList.add('nav-item-active'); sidebarBtn.classList.remove('text-gray-400'); }
+            document.querySelectorAll('.mob-nav-item')?.forEach(item => { item.classList.remove('text-blue-400'); item.classList.add('text-gray-400'); });
+            const mobBtn = document.getElementById(`mob-${tab}`);
+            if (mobBtn) { mobBtn.classList.remove('text-gray-400'); mobBtn.classList.add('text-blue-400'); }
+            if (tab === 'dashboard') loadStats();
+            if (tab === 'glory') { loadActiveGroups(); }
+            if (tab === 'orders') loadOrders();
+            if (tab === 'users') loadUsers();
+            if (tab === 'groups') loadGroups();
+            if (tab === 'transactions') loadTransactions();
+        }
+
+        document.getElementById('logout-btn')?.addEventListener('click', async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; });
+
+        async function init() {
+            const isAdmin = await checkAuth();
+            if (!isAdmin) return;
+            loadStats();
+            switchTab('dashboard');
+            setInterval(() => { if (currentTab === 'glory') loadActiveGroups(); }, 30000);
+            setInterval(() => { if (currentTab === 'orders') loadOrders(); }, 30000);
+        }
+
+        window.switchTab = switchTab;
+        window.loadUsers = loadUsers;
+        window.loadGroups = loadGroups;
+        window.loadTransactions = loadTransactions;
+        window.approveTransaction = approveTransaction;
+        window.rejectTransaction = rejectTransaction;
+        window.openEditModal = openEditModal;
+        window.closeEditModal = closeEditModal;
+        window.saveUserCredits = saveUserCredits;
+        window.generateAdminCoupon = generateAdminCoupon;
+        window.copyCouponCode = copyCouponCode;
+        window.openApproveModal = openApproveModal;
+        window.closeApproveModal = closeApproveModal;
+        window.rejectOrder = rejectOrder;
+        window.openUpdateGloryModal = openUpdateGloryModal;
+        window.closeUpdateGloryModal = closeUpdateGloryModal;
+        window.openAutoGloryModal = openAutoGloryModal;
+        window.closeAutoGloryModal = closeAutoGloryModal;
+        window.loadActiveGroups = loadActiveGroups;
+
+        init();
+    </script>
+</body>
+</html>

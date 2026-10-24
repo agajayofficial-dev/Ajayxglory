@@ -1,1 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClanBoost Pro - Login / Signup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b1120;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        :root {
+            --blue: #3b82f6;
+            --blue-dark: #2563eb;
+            --blue-light: #60a5fa;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+        }
+
+        .bg-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at 30% 40%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 460px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 0.8rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--blue);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--blue);
+        }
+
+        .tab:hover {
+            color: var(--blue);
+        }
+
+        .form {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            font-size: 0.95rem;
+            color: white;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-group input::placeholder {
+            color: #64748b;
+        }
+
+        .checkbox-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-dim);
+        }
+
+        .checkbox input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--blue);
+        }
+
+        .forgot {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        .forgot:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--blue);
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn:hover {
+            background: var(--blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .divider {
+            text-align: center;
+            position: relative;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider span {
+            background: var(--bg-card);
+            padding: 0 1rem;
+            position: relative;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .social a {
+            width: 44px;
+            height: 44px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .social a:hover {
+            background: var(--blue);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .alert {
+            padding: 0.8rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            display: block;
+        }
+
+        .alert.success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            display: block;
+        }
+
+        .terms-text {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .terms-text a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        @media (max-width: 500px) {
+            .auth-card {
+                padding: 1.8rem;
+            }
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-effect"></div>
+
+<div class="auth-card">
+    <div class="logo">
+        <h1>⚡ ClanBoost Pro</h1>
+        <p>Free Fire Clan Glory Automation</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-form="login">Login</button>
+        <button class="tab" data-form="signup">Sign Up</button>
+    </div>
+
+    <div class="form active" id="loginForm">
+        <div class="alert" id="loginAlert"></div>
+        <form id="login">
+            <div class="input-group">
+                <input type="email" id="loginEmail" placeholder="Email address" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="loginPassword" placeholder="Password" required>
+            </div>
+            <div class="checkbox-group">
+                <label class="checkbox">
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#" class="forgot">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <div class="divider"><span>Or continue with</span></div>
+        <div class="social">
+            <a href="#"><i class="fab fa-google"></i></a>
+            <a href="#"><i class="fab fa-discord"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+    </div>
+
+    <div class="form" id="signupForm">
+        <div class="alert" id="signupAlert"></div>
+        <form id="signup">
+            <div class="input-group">
+                <input type="text" id="signupName" placeholder="Full name" required>
+            </div>
+            <div class="input-group">
+                <input type="email" id="signupEmail" placeholder="Email address" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="signupConfirm" placeholder="Confirm password" required>
+            </div>
+            <div class="checkbox-group">
+                <label class="checkbox">
+                    <input type="checkbox" id="termsCheck"> I agree to the Terms
+                </label>
+            </div>
+            <button type="submit" class="btn">Create Account</button>
+        </form>
+        <div class="divider"><span>Or sign up with</span></div>
+        <div class="social">
+            <a href="#"><i class="fab fa-google"></i></a>
+            <a href="#"><i class="fab fa-discord"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+    </div>
+
+    <div class="terms-text">
+        By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+    </div>
+</div>
+
+<script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab');
+    const forms = document.querySelectorAll('.form');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const formId = tab.dataset.form;
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            forms.forEach(form => form.classList.remove('active'));
+            document.getElementById(formId + 'Form').classList.add('active');
+        });
+    });
+
+    // Login handler
+    document.getElementById('login').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const alertBox = document.getElementById('loginAlert');
+
+        if (!email || !password) {
+            alertBox.textContent = 'Please fill in all fields';
+            alertBox.className = 'alert error';
+            setTimeout(() => alertBox.className = 'alert', 3000);
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                alertBox.textContent = 'Login successful! Redirecting...';
+                alertBox.className = 'alert success';
+                setTimeout(() => {
+                    window.location.href = '/home';
+                }, 1500);
+            } else {
+                alertBox.textContent = data.error || 'Login failed';
+                alertBox.className = 'alert error';
+                setTimeout(() => alertBox.className = 'alert', 3000);
+            }
+        } catch (err) {
+            alertBox.textContent = 'Network error. Please try again.';
+            alertBox.className = 'alert error';
+            setTimeout(() => alertBox.className = 'alert', 3000);
+        }
+    });
+
+    // Signup handler
+    document.getElementById('signup').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('signupName').value;
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirm = document.getElementById('signupConfirm').value;
+        const terms = document.getElementById('termsCheck').checked;
+        const alertBox = document.getElementById('signupAlert');
+
+        if (!name || !email || !password || !confirm) {
+            alertBox.textContent = 'Please fill in all fields';
+            alertBox.className = 'alert error';
+            setTimeout(() => alertBox.className = 'alert', 3000);
+            return;
+        }
+
+        if (password !== confirm) {
+            alertBox.textContent = 'Passwords do not match';
+            alertBox.className = 'alert error';
+            setTimeout(() => alertBox.className = 'alert', 3000);
+            return;
+        }
+
+        if (password.length < 6) {
+            alertBox.textContent = 'Password must be at least 6 characters';
+            alertBox.className = 'alert error';
+            setTimeout(() => alertBox.className = 'alert', 3000);
+            return;
+        }
+
+        if (!terms) {
+            alertBox.textContent = 'Please agree to the Terms of Service';
+            alertBox.className = 'alert error';
+            setTimeout(() => alertBox.className = 'alert', 3000);
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: name, email, password })
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                alertBox.textContent = 'Account created! Redirecting to login...';
+                alertBox.className = 'alert success';
+                setTimeout(() => {
+                    document.getElementById('loginEmail').value = email;
+                    document.querySelector('.tab[data-form="login"]').click();
+                    alertBox.className = 'alert';
+                }, 2000);
+            } else {
+                alertBox.textContent = data.error || 'Registration failed';
+                alertBox.className = 'alert error';
+                setTimeout(() => alertBox.className = 'alert', 3000);
+            }
+        } catch (err) {
+            alertBox.textContent = 'Network error. Please try again.';
+            alertBox.className = 'alert error';
+            setTimeout(() => alertBox.className = 'alert', 3000);
+        }
+    });
+</script>
+</body>
+</html>

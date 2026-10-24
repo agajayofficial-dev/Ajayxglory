@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ClanBoost Pro - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0c15; color: #e2e8f0; min-height: 100vh; }
+        :root { --primary: #3b82f6; --primary-dark: #2563eb; --primary-light: #60a5fa; --bg-dark: #0a0c15; --bg-card: #0f111a; --bg-elevated: #151821; --border-dim: #1e2130; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        .ng-card { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 20px; transition: all 0.3s ease; }
+        .ng-card:hover { border-color: var(--primary); box-shadow: 0 8px 25px -10px rgba(59, 130, 246, 0.2); }
+        .ng-input { background: var(--bg-elevated); border: 1px solid var(--border-dim); border-radius: 12px; padding: 0.75rem 1rem; width: 100%; color: #e2e8f0; transition: all 0.3s ease; }
+        .ng-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .ng-input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .ng-btn-primary { background: var(--primary); border: none; border-radius: 12px; padding: 0.75rem 1.5rem; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .ng-btn-primary:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-2px); }
+        .ng-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .ng-btn-outline { background: transparent; border: 1px solid var(--border-dim); border-radius: 12px; padding: 0.75rem 1.5rem; color: #94a3b8; font-weight: 500; cursor: pointer; transition: all 0.3s ease; }
+        .ng-btn-outline:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+        .ng-btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
+        .ng-btn-success { background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 12px; padding: 0.75rem 1.5rem; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .ng-btn-success:hover:not(:disabled) { transform: translateY(-2px); }
+        .ng-btn-success:disabled { opacity: 0.5; cursor: not-allowed; }
+        .ng-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 500; }
+        .ng-badge-blue { background: rgba(59, 130, 246, 0.15); color: var(--primary-light); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .ng-badge-gold { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .ng-badge-yellow { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .ng-badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .ng-section-title { display: flex; align-items: center; gap: 12px; font-size: 1.2rem; font-weight: 600; }
+        .ng-section-icon { width: 36px; height: 36px; background: rgba(59, 130, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .loader { width: 20px; height: 20px; border: 2px solid var(--border-dim); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .nav-item-active { background: rgba(59, 130, 246, 0.1); color: var(--primary-light); border-left: 3px solid var(--primary); }
+        .toast-show { animation: toastIn 0.3s ease-out; }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .group-card { background: linear-gradient(135deg, #0f111a 0%, #0a0c15 100%); border: 1px solid #1e2130; border-radius: 24px; transition: all 0.3s ease; overflow: hidden; position: relative; }
+        .group-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .group-card.loading { position: relative; }
+        .group-card.loading .card-content { filter: blur(4px); pointer-events: none; }
+        .group-card.loading .loading-overlay { display: flex; }
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 12, 21, 0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10; border-radius: 24px; }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border-dim); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 600; }
+        .status-running { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .status-stopped { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .status-completed { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .stat-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .stat-label { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { color: #e2e8f0; font-size: 0.9rem; font-weight: 500; }
+        .bot-avatar { width: 48px; height: 48px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); display: flex; align-items: center; justify-content: center; border: 1px solid #334155; }
+        .bot-avatar img { width: 32px; height: 32px; object-fit: contain; }
+        .bot-name { font-size: 1.2rem; font-weight: 700; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        
+        .btn-restart { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; border-radius: 8px; padding: 6px 14px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s ease; cursor: pointer; }
+        .btn-restart:hover:not(:disabled) { background: rgba(16, 185, 129, 0.2); border-color: #10b981; transform: translateY(-1px); }
+        .btn-stop { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; border-radius: 8px; padding: 6px 14px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s ease; cursor: pointer; }
+        .btn-stop:hover:not(:disabled) { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; transform: translateY(-1px); }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; border-radius: 8px; padding: 6px 14px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s ease; cursor: pointer; }
+        .btn-delete:hover:not(:disabled) { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; transform: translateY(-1px); }
+        .btn-refund { color: #6b7280; font-size: 0.7rem; transition: all 0.2s ease; cursor: pointer; background: none; border: none; }
+        .btn-refund:hover { color: #10b981; }
+        .button-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 8px; }
+        .pending-card { background: linear-gradient(135deg, #1a1d28 0%, #0f111a 100%); border: 1px solid #fbbf2430; border-radius: 24px; transition: all 0.3s ease; overflow: hidden; }
+        
+        /* Buy Credits Card Styles */
+        .buy-credits-card {
+            background: linear-gradient(135deg, #1a1d28 0%, #0f111a 100%);
+            border: 1px solid #3b82f640;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            text-align: center;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        .buy-credits-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.2);
+        }
+        .telegram-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0088cc, #00a3e0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 0 20px rgba(0, 136, 204, 0.4);
+        }
+        .glow-btn {
+            background: linear-gradient(135deg, #0088cc, #00a3e0);
+            border: none;
+            border-radius: 40px;
+            padding: 12px 28px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 136, 204, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+        .glow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 136, 204, 0.8);
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 136, 204, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(0, 136, 204, 0.8); }
+        }
+        
+        /* Full page buy credits container */
+        .full-page-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            padding: 2rem;
+        }
+        
+        @keyframes modalSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-modal-slide-up { animation: modalSlideUp 0.3s ease-out; }
+        @keyframes pulse-update { 0% { opacity: 0.6; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1); } }
+        .updating { animation: pulse-update 0.3s ease-out; }
+        .btn-spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block; }
+        @media (max-width: 640px) { .bot-avatar { width: 40px; height: 40px; } .bot-avatar img { width: 24px; height: 24px; } .btn-restart, .btn-stop, .btn-delete { padding: 4px 10px; font-size: 0.7rem; } .bot-name { font-size: 1rem; } .buy-credits-card { padding: 2rem 1.5rem; margin: 1rem; } .telegram-icon { width: 60px; height: 60px; } }
+    </style>
+</head>
+<body>
+
+    <div class="flex-grow flex flex-col">
+        <nav class="sticky top-0 z-20 px-4 py-3 bg-[#0f111a]/95 backdrop-blur-lg border-b border-[#1e2130]">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                        <i class="fas fa-bolt text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">ClanBoost Pro</h1>
+                    <div class="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-[10px] text-emerald-400 font-medium">LIVE</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="logout-btn-mobile" class="sm:hidden text-xs text-gray-400 hover:text-white border border-[#1e2130] rounded-lg px-3 py-1.5"><i class="fas fa-sign-out-alt mr-1"></i>Exit</button>
+                    <button id="logout-btn-desktop" class="hidden sm:flex ng-btn-outline text-xs px-3 py-1.5 items-center gap-1"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 mt-3 overflow-x-auto pb-1">
+                <span id="user-badge" class="ng-badge ng-badge-blue text-[11px] whitespace-nowrap"><i class="fas fa-user-circle mr-1"></i> Loading...</span>
+                <span id="basic-credits-badge" class="ng-badge ng-badge-blue text-[11px] hidden whitespace-nowrap"><i class="fas fa-gem mr-1"></i> Basic: <span id="basic-credits-val" class="font-bold">0</span></span>
+                <span id="premium-credits-badge" class="ng-badge ng-badge-gold text-[11px] hidden whitespace-nowrap"><i class="fas fa-crown mr-1"></i> Premium: <span id="premium-credits-val" class="font-bold">0</span></span>
+            </div>
+        </nav>
+
+        <div class="flex-grow p-4 md:p-6 overflow-auto">
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Sidebar with Buy Credits Button -->
+                <aside class="hidden lg:block w-64 flex-shrink-0">
+                    <div class="ng-card p-2 sticky top-4">
+                        <nav class="space-y-1">
+                            <button onclick="switchTab('dashboard')" id="sidebar-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-chart-line w-4"></i> Overview</button>
+                            <button onclick="switchTab('groups')" id="sidebar-groups" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-layer-group w-4"></i> Bot Instances</button>
+                            <button onclick="switchTab('transactions')" id="sidebar-transactions" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-receipt w-4"></i> Transactions</button>
+                            <button onclick="switchTab('coupons')" id="sidebar-coupons" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-ticket-alt w-4"></i> Coupons</button>
+                            <button onclick="switchTab('account')" id="sidebar-account" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"><i class="fas fa-user-shield w-4"></i> Security</button>
+                            <!-- Buy Credits Sidebar Button -->
+                            <button onclick="showBuyCreditsOnly()" id="sidebar-buycredits" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 mt-2 border-t border-[#1e2130] pt-3"><i class="fab fa-telegram-plane w-4"></i> Buy Credits</button>
+                        </nav>
+                    </div>
+                </aside>
+
+                <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0f111a]/95 backdrop-blur-lg border-t border-[#1e2130]">
+                    <div class="flex items-center justify-around px-2 py-2">
+                        <button onclick="switchTab('dashboard')" id="mob-dashboard" class="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-gray-400"><i class="fas fa-chart-line text-lg"></i><span class="text-[10px]">Home</span></button>
+                        <button onclick="switchTab('groups')" id="mob-groups" class="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-gray-400"><i class="fas fa-layer-group text-lg"></i><span class="text-[10px]">Bots</span></button>
+                        <button onclick="switchTab('transactions')" id="mob-transactions" class="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-gray-400"><i class="fas fa-receipt text-lg"></i><span class="text-[10px]">TX</span></button>
+                        <button onclick="showBuyCreditsOnly()" id="mob-buycredits" class="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-gray-400"><i class="fab fa-telegram-plane text-lg"></i><span class="text-[10px]">Buy</span></button>
+                    </div>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                    <!-- Normal Dashboard Content (hidden when buy credits shown) -->
+                    <div id="normal-content" class="space-y-6">
+                        <!-- Dashboard Tab Content -->
+                        <div id="tab-dashboard" class="tab-content space-y-6">
+                            <div class="ng-card p-5 bg-gradient-to-r from-blue-600/10 to-transparent border-blue-500/20">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <div><h2 class="text-xl font-bold">Welcome back, <span id="welcome-name" class="text-blue-400">User</span>!</h2><p class="text-sm text-gray-400 mt-1">Ready to boost your clan ranking today?</p></div>
+                                    <div class="flex gap-2">
+                                        <div class="text-center px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20"><p class="text-xs text-gray-400">Basic Credits</p><p class="text-xl font-bold text-blue-400" id="dashboard-basic">0</p></div>
+                                        <div class="text-center px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20"><p class="text-xs text-gray-400">Premium Credits</p><p class="text-xl font-bold text-amber-400" id="dashboard-premium">0</p></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ng-card p-5">
+                                <div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-rocket text-blue-400"></i></div><h3>Launch New Bot Instance</h3></div>
+                                <form id="launch-form" class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div><label class="block text-xs text-gray-400 mb-1">Select Region</label><select id="region-select" class="ng-input" required><option value="" disabled selected>Loading regions...</option></select><div id="region-price-info" class="mt-2 text-xs"><span class="text-gray-500">Cost:</span><span id="region-cost" class="text-amber-400 font-medium">--</span></div></div>
+                                        <div><label class="block text-xs text-gray-400 mb-1">Clan ID</label><input type="text" id="clan-id" placeholder="Enter your clan ID" class="ng-input" required></div>
+                                    </div>
+                                    <button type="submit" id="launch-submit" class="w-full ng-btn-success py-3 flex items-center justify-center gap-2"><i class="fas fa-play"></i> Start Boosting</button>
+                                </form>
+                                <div id="launch-message" class="mt-3 text-sm text-center hidden"></div>
+                            </div>
+
+                            <div class="ng-card p-5" id="pending-orders-section" style="display: none;">
+                                <div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-clock text-yellow-400"></i></div><h3 class="text-yellow-400">Pending Approval</h3></div>
+                                <div id="pending-orders-list" class="space-y-3"></div>
+                            </div>
+
+                            <div class="ng-card p-5">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="ng-section-title"><div class="ng-section-icon"><i class="fas fa-server text-blue-400"></i></div><h3>Bot Instances</h3><span id="groups-count" class="ng-badge ng-badge-blue text-xs">0</span></div>
+                                    <button onclick="refreshGroups()" class="text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-sync-alt"></i> Refresh</button>
+                                </div>
+                                <div id="groups-list" class="space-y-4"></div>
+                            </div>
+
+                            <div id="launch-progress-card" class="ng-card p-5 hidden">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="ng-section-title"><div class="ng-section-icon"><i class="fas fa-bolt text-amber-400"></i></div><h3>Launch Progress</h3></div>
+                                    <span id="lp-stage" class="status-badge status-pending">STARTING</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div><div id="lp-guild-name" class="text-lg font-bold text-white">Guild</div><div id="lp-guild-meta" class="text-xs text-gray-400 mt-1">Loading...</div></div>
+                                    <button id="lp-close" class="hidden ng-btn-outline text-xs px-3 py-1.5">Close</button>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 mb-4">
+                                    <div class="bg-[#1a1d28] rounded-xl p-3 text-center"><div class="text-[10px] text-gray-500">LEVEL</div><div id="lp-level" class="text-lg font-bold text-white">--</div></div>
+                                    <div class="bg-[#1a1d28] rounded-xl p-3 text-center"><div class="text-[10px] text-gray-500">MEMBERS</div><div id="lp-members" class="text-lg font-bold text-white">--</div></div>
+                                    <div class="bg-[#1a1d28] rounded-xl p-3 text-center"><div class="text-[10px] text-gray-500">GLORY</div><div id="lp-glory" class="text-lg font-bold text-amber-400">0</div></div>
+                                </div>
+                                <div class="bg-[#0a0c12] rounded-xl p-4"><div class="text-xs text-gray-500 mb-2">BOT JOIN STATUS</div><div id="lp-joins" class="space-y-2"><div class="text-sm text-gray-400">Preparing 4 accounts…</div></div></div>
+                                <div class="flex items-center justify-between gap-2 mt-3 text-xs"><span id="lp-message" class="text-gray-400">Starting...</span><button id="lp-retry" class="hidden px-3 py-1.5 rounded-lg border border-blue-500/40 text-blue-300">Try Again</button></div>
+                            </div>
+                        </div>
+
+                        <div id="tab-groups" class="tab-content hidden space-y-6">
+                            <div id="launch-progress-card-full" class="ng-card p-5 hidden">
+                                <div class="flex items-center justify-between mb-4"><div class="ng-section-title"><div class="ng-section-icon"><i class="fas fa-bolt text-amber-400"></i></div><h3>Launch Progress</h3></div><span id="lp-stage-full" class="status-badge status-pending">STARTING</span></div>
+                                <div class="flex items-center justify-between mb-3"><div><div id="lp-guild-name-full" class="text-lg font-bold text-white">Guild</div><div id="lp-guild-meta-full" class="text-xs text-gray-400 mt-1">Loading...</div></div><button id="lp-close-full" class="hidden ng-btn-outline text-xs px-3 py-1.5">Close</button></div>
+                                <div class="grid grid-cols-3 gap-2 mb-4"><div class="bg-[#1a1d28] rounded-xl p-3 text-center"><div class="text-[10px] text-gray-500">LEVEL</div><div id="lp-level-full" class="text-lg font-bold text-white">--</div></div><div class="bg-[#1a1d28] rounded-xl p-3 text-center"><div class="text-[10px] text-gray-500">MEMBERS</div><div id="lp-members-full" class="text-lg font-bold text-white">--</div></div><div class="bg-[#1a1d28] rounded-xl p-3 text-center"><div class="text-[10px] text-gray-500">GLORY</div><div id="lp-glory-full" class="text-lg font-bold text-amber-400">0</div></div></div>
+                                <div class="bg-[#0a0c12] rounded-xl p-4"><div class="text-xs text-gray-500 mb-2">BOT JOIN STATUS</div><div id="lp-joins-full" class="space-y-2"><div class="text-sm text-gray-400">Preparing 4 accounts…</div></div></div>
+                                <div class="flex items-center justify-between gap-2 mt-3 text-xs"><span id="lp-message-full" class="text-gray-400">Starting...</span><button id="lp-retry-full" class="hidden px-3 py-1.5 rounded-lg border border-blue-500/40 text-blue-300">Try Again</button></div>
+                            </div>
+                            <div class="ng-card p-5"><div class="flex items-center justify-between mb-4"><div class="ng-section-title"><div class="ng-section-icon"><i class="fas fa-server text-blue-400"></i></div><h3>All Bot Instances</h3></div><button onclick="refreshGroups()" class="ng-btn-outline text-xs px-3 py-1.5"><i class="fas fa-sync-alt mr-1"></i> Refresh</button></div><div id="groups-full-list" class="space-y-4"></div></div>
+                        </div>
+
+                        <div id="tab-transactions" class="tab-content hidden space-y-6">
+                            <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-receipt text-blue-400"></i></div><h3>Transaction History</h3></div><div id="transactions-list" class="space-y-2"><div class="text-center py-8 text-gray-500"><i class="fas fa-history text-4xl mb-2 opacity-50"></i><p>No transactions yet</p></div></div></div>
+                        </div>
+
+                        <div id="tab-coupons" class="tab-content hidden space-y-6">
+                            <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-gift text-blue-400"></i></div><h3>Redeem Code</h3></div><div class="flex flex-col sm:flex-row gap-3"><input type="text" id="coupon-code" placeholder="Enter coupon code" class="ng-input flex-1"><button onclick="redeemCoupon()" class="ng-btn-primary px-6"><i class="fas fa-check mr-1"></i> Redeem</button></div></div>
+                            <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-ticket-alt text-blue-400"></i></div><h3>Create Gift Code</h3></div><div class="grid grid-cols-2 gap-4 mb-4"><div><label class="text-xs text-gray-400 block mb-1">Basic Credits</label><div class="flex items-center gap-2"><button type="button" onclick="adjustCredits('basic', -1)" class="w-8 h-8 rounded-lg bg-[#1e2130] hover:bg-[#2a2e40]">-</button><input type="number" id="coupon-basic" value="0" min="0" max="100" class="ng-input text-center w-20"><button type="button" onclick="adjustCredits('basic', 1)" class="w-8 h-8 rounded-lg bg-[#1e2130] hover:bg-[#2a2e40]">+</button></div></div><div><label class="text-xs text-gray-400 block mb-1">Premium Credits</label><div class="flex items-center gap-2"><button type="button" onclick="adjustCredits('premium', -1)" class="w-8 h-8 rounded-lg bg-[#1e2130] hover:bg-[#2a2e40]">-</button><input type="number" id="coupon-premium" value="0" min="0" max="20" class="ng-input text-center w-20"><button type="button" onclick="adjustCredits('premium', 1)" class="w-8 h-8 rounded-lg bg-[#1e2130] hover:bg-[#2a2e40]">+</button></div></div></div><button onclick="createCoupon()" class="w-full ng-btn-success py-2.5"><i class="fas fa-plus-circle mr-1"></i> Generate Code</button></div>
+                            <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-list text-blue-400"></i></div><h3>My Codes</h3></div><div id="my-coupons-list" class="space-y-2"><div class="text-center py-6 text-gray-500"><i class="fas fa-ticket-alt text-3xl mb-2 opacity-50"></i><p>No codes created yet</p></div></div></div>
+                        </div>
+
+                        <div id="tab-account" class="tab-content hidden space-y-6">
+                            <div class="ng-card p-5"><div class="ng-section-title mb-4"><div class="ng-section-icon"><i class="fas fa-lock text-blue-400"></i></div><h3>Change Password</h3></div><div class="space-y-4 max-w-md"><div><label class="text-xs text-gray-400 block mb-1">Current Password</label><input type="password" id="current-pw" class="ng-input" placeholder="Enter current password"></div><div><label class="text-xs text-gray-400 block mb-1">New Password</label><input type="password" id="new-pw" class="ng-input" placeholder="Min. 6 characters"></div><div><label class="text-xs text-gray-400 block mb-1">Confirm Password</label><input type="password" id="confirm-pw" class="ng-input" placeholder="Re-enter new password"></div><button onclick="changePassword()" class="ng-btn-primary w-full sm:w-auto"><i class="fas fa-save mr-1"></i> Update Password</button><div id="pw-message" class="text-sm hidden"></div></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Buy Credits Only Card (hidden by default, shown when buy credits button clicked) -->
+                    <div id="buy-credits-container" class="hidden full-page-card">
+                        <div class="buy-credits-card">
+                            <div class="telegram-icon">
+                                <i class="fab fa-telegram-plane text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Buy Credits</h3>
+                            <p class="text-gray-400 text-sm mb-5">Contact us on Telegram to purchase credits</p>
+                            <button onclick="openTelegramBuy()" class="glow-btn">
+                                <i class="fab fa-telegram-plane mr-2"></i> Contact on Telegram
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIRMATION MODAL -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-md p-4">
+        <div class="bg-[#0f111a] border border-[#2a2e40] rounded-2xl max-w-sm w-full shadow-2xl animate-modal-slide-up overflow-hidden">
+            <div class="w-full flex justify-center pt-5"><img src="https://image2url.com/r2/default/images/1775908416785-5c5051a9-19d1-4c61-9dd8-188615fae617.png" alt="Confirm Launch" class="w-20 h-20 object-contain"></div>
+            <div class="px-4 pt-2 pb-2"><h2 class="text-xl font-bold text-center text-white">Confirm Launch</h2></div>
+            <div class="p-5">
+                <div class="flex items-center justify-center gap-6 mb-5"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">1</div><span class="text-sm text-gray-300">Configure</span></div><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center text-white text-xs font-bold">2</div><span class="text-sm text-gray-300">Allow Bots</span></div></div>
+                <div class="text-center mb-5"><p class="text-gray-300 text-sm">Are you sure you want to launch a new group?</p></div>
+                <div class="bg-[#1a1d28] rounded-xl p-4 mb-5 space-y-3"><div class="flex justify-between items-center"><span class="text-gray-400 text-sm">Region:</span><span id="confirm-region" class="text-white font-medium text-sm">--</span></div><div class="flex justify-between items-center"><span class="text-gray-400 text-sm">Clan ID:</span><span id="confirm-clan" class="text-white font-mono text-sm">--</span></div><div class="border-t border-[#2a2e40] pt-2 mt-1 flex justify-between items-center"><span class="text-gray-400 text-sm">Cost:</span><span id="confirm-cost" class="text-amber-400 font-bold text-sm">--</span></div></div>
+                <div class="flex gap-3"><button onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl bg-transparent border border-[#3a3e50] text-gray-300 text-sm font-medium hover:bg-[#2a2e40] transition-all">Cancel</button><button id="confirm-launch-btn" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all flex items-center justify-center gap-2">Launch</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REFUND CONFIRMATION MODAL -->
+    <div id="refund-confirm-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 backdrop-blur-md p-4">
+        <div class="bg-[#0f111a] border border-red-500/30 rounded-2xl max-w-md w-full shadow-2xl animate-modal-slide-up overflow-hidden">
+            <div class="p-5 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-400 text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white mb-3">Warning!</h2>
+                <p class="text-gray-300 text-sm mb-4">
+                    If you refund your credit, our bot will leave your guild and all your glory will be lost.
+                </p>
+                <p class="text-gray-400 text-xs mb-5">Are you sure you want to proceed?</p>
+                <div class="flex gap-3">
+                    <button onclick="closeRefundConfirmModal()" class="flex-1 py-2.5 rounded-xl bg-transparent border border-gray-600 text-gray-300 text-sm font-medium hover:bg-gray-800 transition-all">Cancel</button>
+                    <button id="confirm-refund-btn" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-all">Yes, Refund</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-20 right-4 z-50 space-y-2"></div>
+
+    <script>
+        // Telegram buy link
+        const TELEGRAM_BUY_LINK = "https://t.me/jubayer_codex?text=HI%20JUBAYER%20CODEX%20%0AI%20WANT%20TO%20BUY%20FF%20GUILD%20GLORY";
+        
+        function openTelegramBuy() {
+            window.open(TELEGRAM_BUY_LINK, '_blank');
+        }
+
+        // Show only buy credits card, hide normal content
+        function showBuyCreditsOnly() {
+            document.getElementById('normal-content').classList.add('hidden');
+            document.getElementById('buy-credits-container').classList.remove('hidden');
+            
+            // Update sidebar active state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('nav-item-active');
+                item.classList.remove('text-blue-400');
+                item.classList.add('text-gray-400');
+            });
+            const sidebarBtn = document.getElementById('sidebar-buycredits');
+            if (sidebarBtn) {
+                sidebarBtn.classList.add('nav-item-active');
+                sidebarBtn.classList.remove('text-gray-400');
+            }
+        }
+
+        // Show normal content (used when switching tabs)
+        function showNormalContent() {
+            document.getElementById('normal-content').classList.remove('hidden');
+            document.getElementById('buy-credits-container').classList.add('hidden');
+        }
+
+        const BOT_IMAGE_URL = "https://image2url.com/r2/default/images/1775901380672-8b0bdd25-a43b-422d-b5a5-8b9a0100b254.png";
+        
+        const BOT_NAMES_STORAGE_KEY = 'clanboost_bot_names';
+        const UPTIME_STORAGE_KEY = 'clanboost_uptime';
+        const GLORY_STORAGE_KEY = 'clanboost_glory';
+        const GROUP_STATUS_KEY = 'clanboost_group_status';
+        
+        function loadSavedBotNames() { const saved = localStorage.getItem(BOT_NAMES_STORAGE_KEY); if (saved) { try { return JSON.parse(saved); } catch(e) { return {}; } } return {}; }
+        function saveBotName(groupId, botName) { const saved = loadSavedBotNames(); saved[groupId] = botName; localStorage.setItem(BOT_NAMES_STORAGE_KEY, JSON.stringify(saved)); }
+        function getSavedBotName(groupId) { const saved = loadSavedBotNames(); return saved[groupId] || null; }
+        function removeSavedBotName(groupId) { const saved = loadSavedBotNames(); delete saved[groupId]; localStorage.setItem(BOT_NAMES_STORAGE_KEY, JSON.stringify(saved)); }
+        
+        function loadSavedUptime() { const saved = localStorage.getItem(UPTIME_STORAGE_KEY); if (saved) { try { return JSON.parse(saved); } catch(e) { return {}; } } return {}; }
+        function saveUptime(groupId, seconds) { const saved = loadSavedUptime(); saved[groupId] = seconds; localStorage.setItem(UPTIME_STORAGE_KEY, JSON.stringify(saved)); }
+        function getSavedUptime(groupId) { const saved = loadSavedUptime(); return saved[groupId] || 0; }
+        function removeSavedUptime(groupId) { const saved = loadSavedUptime(); delete saved[groupId]; localStorage.setItem(UPTIME_STORAGE_KEY, JSON.stringify(saved)); }
+        
+        function loadSavedGlory() { const saved = localStorage.getItem(GLORY_STORAGE_KEY); if (saved) { try { return JSON.parse(saved); } catch(e) { return {}; } } return {}; }
+        function saveGlory(groupId, glory) { const saved = loadSavedGlory(); saved[groupId] = glory; localStorage.setItem(GLORY_STORAGE_KEY, JSON.stringify(saved)); }
+        function getSavedGlory(groupId) { const saved = loadSavedGlory(); return saved[groupId] || 0; }
+        function removeSavedGlory(groupId) { const saved = loadSavedGlory(); delete saved[groupId]; localStorage.setItem(GLORY_STORAGE_KEY, JSON.stringify(saved)); }
+        
+        function loadSavedGroupStatus() { const saved = localStorage.getItem(GROUP_STATUS_KEY); if (saved) { try { return JSON.parse(saved); } catch(e) { return {}; } } return {}; }
+        function saveGroupStatus(groupId, status) { const saved = loadSavedGroupStatus(); saved[groupId] = status; localStorage.setItem(GROUP_STATUS_KEY, JSON.stringify(saved)); }
+        function getSavedGroupStatus(groupId) { const saved = loadSavedGroupStatus(); return saved[groupId] || 'running'; }
+        function removeSavedGroupStatus(groupId) { const saved = loadSavedGroupStatus(); delete saved[groupId]; localStorage.setItem(GROUP_STATUS_KEY, JSON.stringify(saved)); }
+        
+        const API = {
+            me: '/api/auth/me', logout: '/api/auth/logout', regions: '/api/public/regions',
+            launch: '/api/client/launch', groups: '/api/client/groups', groupAction: '/api/client/group-action',
+            transactions: '/api/client/transactions', createCoupon: '/api/client/coupons/create',
+            redeemCoupon: '/api/client/coupons/redeem', myCoupons: '/api/client/coupons/my',
+            changePassword: '/api/auth/change-password', gloryProgression: '/api/client/glory-progression',
+            pendingOrders: '/api/client/pending-orders', launchStatus: (id) => `/api/client/launch-status/${id}`
+        };
+
+        let currentUser = null, pendingLaunch = null, pendingRefundGroupId = null, groupDataMap = new Map();
+        let launchButton = document.getElementById('launch-submit'), regionSelect = document.getElementById('region-select');
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = { success: 'bg-green-500/20 border-green-500/30 text-green-400', error: 'bg-red-500/20 border-red-500/30 text-red-400', warning: 'bg-amber-500/20 border-amber-500/30 text-amber-400', info: 'bg-blue-500/20 border-blue-500/30 text-blue-400' };
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-sm ${colors[type]} toast-show`;
+            toast.innerHTML = `<i class="fas ${icons[type]}"></i><span class="text-sm">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100px)'; setTimeout(() => toast.remove(), 300); }, 4000);
+        }
+
+        function formatUptime(seconds) { const hours = Math.floor(seconds / 3600); const minutes = Math.floor((seconds % 3600) / 60); const secs = seconds % 60; return `${hours}h ${minutes}m ${secs}s`; }
+
+        function updateLaunchButtonState() {
+            if (!currentUser) return;
+            const region = regionSelect?.value;
+            if (!region) { if (launchButton) { launchButton.disabled = true; launchButton.style.opacity = '0.5'; launchButton.style.cursor = 'not-allowed'; } return; }
+            const selectedOption = regionSelect.options[regionSelect.selectedIndex];
+            const tier = selectedOption?.dataset?.tier || 'basic';
+            const hasBasicCredit = currentUser.basic_credits > 0;
+            const hasPremiumCredit = currentUser.premium_credits > 0;
+            const hasRequiredCredit = (tier === 'premium' && hasPremiumCredit) || (tier === 'basic' && hasBasicCredit);
+            if (launchButton) {
+                if (!hasRequiredCredit) { launchButton.disabled = true; launchButton.style.opacity = '0.5'; launchButton.style.cursor = 'not-allowed'; }
+                else { launchButton.disabled = false; launchButton.style.opacity = '1'; launchButton.style.cursor = 'pointer'; }
+            }
+        }
+
+        async function init() {
+            try {
+                const res = await fetch(API.me);
+                if (!res.ok) { window.location.href = '/login'; return; }
+                currentUser = await res.json();
+                document.getElementById('user-badge').innerHTML = `<i class="fas fa-user-circle mr-1"></i> ${currentUser.username}`;
+                document.getElementById('welcome-name').textContent = currentUser.username;
+                document.getElementById('basic-credits-val').textContent = currentUser.basic_credits || 0;
+                document.getElementById('premium-credits-val').textContent = currentUser.premium_credits || 0;
+                document.getElementById('dashboard-basic').textContent = currentUser.basic_credits || 0;
+                document.getElementById('dashboard-premium').textContent = currentUser.premium_credits || 0;
+                document.getElementById('basic-credits-badge').classList.remove('hidden');
+                document.getElementById('premium-credits-badge').classList.remove('hidden');
+                await loadRegions();
+                await loadPendingOrders();
+                await loadGroups();
+                await loadTransactions();
+                await loadCoupons();
+                updateLaunchButtonState();
+            } catch (e) { window.location.href = '/login'; }
+        }
+
+        document.getElementById('logout-btn-desktop')?.addEventListener('click', async () => { await fetch(API.logout, { method: 'POST' }); window.location.href = '/login'; });
+        document.getElementById('logout-btn-mobile')?.addEventListener('click', async () => { await fetch(API.logout, { method: 'POST' }); window.location.href = '/login'; });
+
+        async function loadRegions() {
+            try {
+                const res = await fetch(API.regions);
+                const data = await res.json();
+                const regions = data.regions || [];
+                const select = document.getElementById('region-select');
+                select.innerHTML = '<option value="" disabled selected>Select region</option>';
+                regions.forEach(region => {
+                    if (region.enabled) {
+                        const option = document.createElement('option');
+                        option.value = region.id;
+                        option.dataset.tier = region.tier;
+                        const flagMap = { 'br': '🇧🇷', 'me': '🌍', 'ghrab': '🦅', 'bd': '🇧🇩', 'in': '🇮🇳', 'indo': '🇮🇩' };
+                        const flag = flagMap[region.id] || '🏳️';
+                        const tierIcon = region.tier === 'premium' ? '⭐' : '🔵';
+                        option.textContent = `${flag} ${region.region_name} ${tierIcon}`;
+                        select.appendChild(option);
+                    }
+                });
+                select.addEventListener('change', () => {
+                    const selected = select.options[select.selectedIndex];
+                    if (selected && selected.value) {
+                        const tier = selected.dataset.tier;
+                        const price = tier === 'premium' ? 20 : 1.7;
+                        document.getElementById('region-cost').innerHTML = `${tier === 'premium' ? '⭐' : '🔵'} 1 ${tier === 'premium' ? 'Premium' : 'Basic'} Credit ($${price})`;
+                        updateLaunchButtonState();
+                    }
+                });
+                updateLaunchButtonState();
+            } catch (e) { console.error(e); }
+        }
+
+        document.getElementById('launch-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const region = document.getElementById('region-select').value;
+            const clanId = document.getElementById('clan-id').value;
+            if (!region || !clanId) { showToast('Please fill all fields', 'error'); return; }
+            const selectedOption = document.getElementById('region-select').options[document.getElementById('region-select').selectedIndex];
+            const tier = selectedOption?.dataset?.tier || 'basic';
+            const hasBasicCredit = currentUser.basic_credits > 0;
+            const hasPremiumCredit = currentUser.premium_credits > 0;
+            const hasRequiredCredit = (tier === 'premium' && hasPremiumCredit) || (tier === 'basic' && hasBasicCredit);
+            if (!hasRequiredCredit) { showToast(`❌ Insufficient ${tier === 'premium' ? 'Premium' : 'Basic'} Credits`, 'error'); return; }
+            pendingLaunch = { region, clan_id: clanId };
+            const selected = document.getElementById('region-select').options[document.getElementById('region-select').selectedIndex];
+            const regionText = selected.textContent;
+            const tierName = selected.dataset.tier;
+            const price = tierName === 'premium' ? 20 : 1.7;
+            document.getElementById('confirm-region').innerHTML = regionText;
+            document.getElementById('confirm-clan').textContent = clanId;
+            document.getElementById('confirm-cost').innerHTML = `1 ${tierName === 'premium' ? '⭐ Premium' : '🔵 Basic'} Credit ($${price})`;
+            document.getElementById('confirm-modal').style.display = 'flex';
+        });
+
+        function closeConfirmModal() { document.getElementById('confirm-modal').style.display = 'none'; pendingLaunch = null; const btn = document.getElementById('confirm-launch-btn'); if (btn) { btn.innerHTML = 'Launch'; btn.disabled = false; } }
+
+        document.getElementById('confirm-launch-btn')?.addEventListener('click', async () => {
+            if (!pendingLaunch) return;
+            const btn = document.getElementById('confirm-launch-btn');
+            btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Launching...';
+            try {
+                const res = await fetch(API.launch, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pendingLaunch) });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    document.getElementById('clan-id').value = '';
+                    closeConfirmModal();
+                    await refreshUserCredits();
+                    openLaunchProgress(data.group.id, data.guild || {});
+                    await loadGroups();
+                } else {
+                    showToast(data.error || 'Launch failed', 'error');
+                    btn.disabled = false; btn.innerHTML = 'Launch';
+                }
+            } catch (e) { showToast('Network error', 'error'); btn.disabled = false; btn.innerHTML = 'Launch'; }
+        });
+
+        let launchPollTimer = null;
+        function setLaunchProgressVisible(visible) {
+            ['launch-progress-card','launch-progress-card-full'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('hidden', !visible); });
+        }
+        function setLaunchProgressValue(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
+        function openLaunchProgress(groupId, guild) {
+            setLaunchProgressVisible(true);
+            const vals = {
+                'lp-guild-name': guild.GuildName || 'Guild', 'lp-guild-meta': `ID: ${guild.GuildId || groupId} • ${guild.GuildRegion || ''}`,
+                'lp-level': `LV.${guild.GuildLevel || 0}`, 'lp-members': `${guild.CurrentMembers || 0}/${guild.MaxMembers || 0}`,
+                'lp-glory': '0', 'lp-message': 'Preparing 4 accounts…'
+            };
+            Object.entries(vals).forEach(([id,v]) => setLaunchProgressValue(id,v));
+            ['lp-stage','lp-stage-full'].forEach(id => setLaunchProgressValue(id,'GUILD INFO'));
+            ['lp-guild-name-full','lp-guild-meta-full','lp-level-full','lp-members-full','lp-glory-full','lp-message-full'].forEach(id => {
+                const base = id.replace('-full',''); const value = vals[base]; if (value !== undefined) setLaunchProgressValue(id,value);
+            });
+            ['lp-joins','lp-joins-full'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML='<div class="text-sm text-gray-400">Preparing 4 accounts…</div>'; });
+            ['lp-close','lp-close-full'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('hidden'); });
+            ['lp-retry','lp-retry-full'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('hidden'); });
+            if (launchPollTimer) clearInterval(launchPollTimer);
+            pollLaunchStatus(groupId);
+            launchPollTimer = setInterval(() => pollLaunchStatus(groupId), 3000);
+            setTimeout(() => { document.getElementById('launch-progress-card')?.scrollIntoView({behavior:'smooth', block:'center'}); }, 80);
+        }
+        async function pollLaunchStatus(groupId) {
+            try {
+                const res = await fetch(API.launchStatus(groupId));
+                if (!res.ok) return;
+                const data = await res.json(); const run = data.run || {}; const group = data.group || {};
+                const stageMap = {guild:'GUILD INFO',generating:'GENERATING 4 ACCOUNTS (4 THREADS)',joining:'SENDING JOIN REQUESTS',starting:'STARTING GLORY BOTS',running:'RUNNING',completed:'COMPLETED',error:'FAILED'};
+                const stage = (stageMap[run.stage] || String(run.stage || 'STARTING')).toUpperCase();
+                const failed = run.status === 'failed';
+                ['lp-stage','lp-stage-full'].forEach(id => { const el=document.getElementById(id); if(el){el.textContent=stage; el.className=`status-badge ${failed ? 'status-stopped' : (run.stage === 'running' ? 'status-running' : 'status-pending')}`;} });
+                ['lp-message','lp-message-full'].forEach(id => setLaunchProgressValue(id, run.message || stage));
+                ['lp-glory','lp-glory-full'].forEach(id => setLaunchProgressValue(id, Number(group.glory_earned || 0).toLocaleString()));
+                ['lp-members','lp-members-full'].forEach(id => setLaunchProgressValue(id, group.members || '--'));
+                const joins = run.join_results || [];
+                const html = joins.length ? joins.map(x => `<div class="flex items-center justify-between bg-[#151823] rounded-lg px-3 py-2"><span class="text-xs text-gray-300">UID ${escapeHtml(String(x.uid))}</span><span class="text-xs font-semibold ${x.success ? 'text-green-400' : 'text-red-400'}">${x.success ? '✓ Join Success' : '✕ Join Failed'}</span></div>`).join('') : (run.stage === 'generating' ? '<div class="text-sm text-gray-400">Preparing 4 accounts…</div>' : '<div class="text-sm text-gray-400">Waiting for join results…</div>');
+                ['lp-joins','lp-joins-full'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=html; });
+                if (run.status === 'failed' || run.status === 'completed') {
+                    clearInterval(launchPollTimer); launchPollTimer = null;
+                    ['lp-close','lp-close-full'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.remove('hidden'); });
+                    if (run.status === 'failed') {
+                        ['lp-retry','lp-retry-full'].forEach(id => {
+                            const retry=document.getElementById(id); if(!retry) return; retry.classList.remove('hidden'); retry.onclick=()=>{ setLaunchProgressVisible(false); document.getElementById('region-select').value=group.region; document.getElementById('clan-id').value=group.clan_id; pendingLaunch={region:group.region,clan_id:group.clan_id}; document.getElementById('confirm-region').textContent=group.region.toUpperCase(); document.getElementById('confirm-clan').textContent=group.clan_id; document.getElementById('confirm-modal').style.display='flex'; };
+                        });
+                    }
+                    ['lp-close','lp-close-full'].forEach(id => { const el=document.getElementById(id); if(el) el.onclick=()=>setLaunchProgressVisible(false); });
+                    if (run.status === 'failed') showToast(run.message || 'Launch failed', 'error'); else showToast('Glory bots are running', 'success');
+                    await loadGroups();
+                }
+            } catch (e) { console.error('launch status', e); }
+        }
+
+        async function loadPendingOrders() {
+            try {
+                const res = await fetch(API.pendingOrders);
+                const orders = await res.json();
+                const section = document.getElementById('pending-orders-section');
+                const container = document.getElementById('pending-orders-list');
+                if (orders && orders.length > 0) {
+                    section.style.display = 'block';
+                    const regionNames = { 'bd': 'Bangladesh', 'in': 'India', 'indo': 'Indonesia', 'br': 'Brazil', 'me': 'Middle East', 'ghrab': 'MENA' };
+                    container.innerHTML = orders.map(order => `<div class="pending-card p-4"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2"><i class="fas fa-clock text-yellow-400"></i><span class="font-medium">Guild: ${order.clan_id}</span></div><span class="status-badge status-pending"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span> PENDING</span></div><div class="text-sm text-gray-400">${regionNames[order.region] || order.region.toUpperCase()} - ${order.region_tier === 'premium' ? 'Premium' : 'Basic'}</div><div class="text-xs text-gray-500 mt-2">Order placed: ${new Date(order.created_at).toLocaleString()}</div></div>`).join('');
+                } else { section.style.display = 'none'; }
+            } catch (e) { console.error('Failed to load pending orders:', e); }
+        }
+
+        function startUptimeCounter(groupId) {
+            const interval = setInterval(() => {
+                const data = groupDataMap.get(groupId);
+                const savedStatus = getSavedGroupStatus(groupId);
+                if (data && data.isInitialized && savedStatus === 'running') {
+                    data.uptimeSeconds++;
+                    groupDataMap.set(groupId, data);
+                    saveUptime(groupId, data.uptimeSeconds);
+                    updateUptimeUI(groupId);
+                }
+            }, 1000);
+            const existingData = groupDataMap.get(groupId);
+            if (existingData) { existingData.uptimeInterval = interval; groupDataMap.set(groupId, existingData); }
+        }
+        
+        function updateUptimeUI(groupId) {
+            const groupCard = document.getElementById(`group-card-${groupId}`);
+            if (!groupCard) return;
+            const data = groupDataMap.get(groupId);
+            if (!data) return;
+            const uptimeEl = groupCard.querySelector('.uptime-value');
+            if (uptimeEl && data.isInitialized) { uptimeEl.textContent = formatUptime(data.uptimeSeconds); uptimeEl.classList.add('updating'); setTimeout(() => uptimeEl.classList.remove('updating'), 300); }
+        }
+
+        async function refreshUserCredits() {
+            try {
+                const res = await fetch(API.me);
+                if (res.ok) {
+                    const user = await res.json();
+                    currentUser = user;
+                    document.getElementById('basic-credits-val').textContent = user.basic_credits || 0;
+                    document.getElementById('premium-credits-val').textContent = user.premium_credits || 0;
+                    document.getElementById('dashboard-basic').textContent = user.basic_credits || 0;
+                    document.getElementById('dashboard-premium').textContent = user.premium_credits || 0;
+                    updateLaunchButtonState();
+                }
+            } catch (e) {}
+        }
+
+        function setButtonLoading(button, isLoading, originalHtml = null) {
+            if (!button) return;
+            if (isLoading) {
+                button.dataset.originalHtml = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<span class="btn-spinner"></span>';
+            } else {
+                button.disabled = false;
+                if (button.dataset.originalHtml) { button.innerHTML = button.dataset.originalHtml; }
+                else if (originalHtml) { button.innerHTML = originalHtml; }
+            }
+        }
+
+        function openRefundConfirmModal(groupId) {
+            pendingRefundGroupId = groupId;
+            document.getElementById('refund-confirm-modal').style.display = 'flex';
+        }
+
+        function closeRefundConfirmModal() {
+            document.getElementById('refund-confirm-modal').style.display = 'none';
+            pendingRefundGroupId = null;
+        }
+
+        document.getElementById('confirm-refund-btn')?.addEventListener('click', async () => {
+            if (!pendingRefundGroupId) return;
+            const btn = document.getElementById('confirm-refund-btn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader"></span> Processing...';
+            try {
+                const res = await fetch(API.groupAction, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ group_id: parseInt(pendingRefundGroupId), action: 'refund' })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast(data.message || 'Refund processed successfully!', 'success');
+                    const groupData = groupDataMap.get(parseInt(pendingRefundGroupId));
+                    if (groupData) {
+                        if (groupData.gloryInterval) clearInterval(groupData.gloryInterval);
+                        if (groupData.uptimeInterval) clearInterval(groupData.uptimeInterval);
+                        if (groupData.loadingTimeout) clearTimeout(groupData.loadingTimeout);
+                    }
+                    removeSavedBotName(pendingRefundGroupId);
+                    removeSavedUptime(pendingRefundGroupId);
+                    removeSavedGlory(pendingRefundGroupId);
+                    removeSavedGroupStatus(pendingRefundGroupId);
+                    groupDataMap.delete(parseInt(pendingRefundGroupId));
+                    await loadGroups();
+                    await refreshUserCredits();
+                    closeRefundConfirmModal();
+                } else {
+                    showToast(data.error || 'Refund failed', 'error');
+                }
+            } catch (e) {
+                showToast('Network error', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        });
+
+        async function loadGroups() {
+            try {
+                const res = await fetch(API.groups);
+                let groups = await res.json();
+                groups = groups.map(group => { const savedStatus = getSavedGroupStatus(group.id); if (savedStatus === 'stopped') { group.status = 'stopped'; } return group; });
+                const groupsList = document.getElementById('groups-list');
+                const groupsFull = document.getElementById('groups-full-list');
+                const groupsCount = document.getElementById('groups-count');
+                if (groupsCount) groupsCount.textContent = groups.length;
+                if (!groups || groups.length === 0) {
+                    const emptyHtml = `<div class="text-center py-12"><div class="w-20 h-20 mx-auto mb-4 rounded-full bg-[#1e2130] flex items-center justify-center"><i class="fas fa-robot text-3xl text-gray-600"></i></div><p class="text-gray-500">No bot instances running</p><p class="text-xs text-gray-600 mt-1">Launch a new bot to get started</p></div>`;
+                    if (groupsList) groupsList.innerHTML = emptyHtml;
+                    if (groupsFull) groupsFull.innerHTML = emptyHtml;
+                    return;
+                }
+                
+                groups.forEach(group => {
+                    const savedStatus = getSavedGroupStatus(group.id);
+                    const isRunning = savedStatus === 'running';
+                    if (!groupDataMap.has(group.id)) {
+                        const savedBotName = getSavedBotName(group.id);
+                        const savedUptime = getSavedUptime(group.id);
+                        const savedGlory = getSavedGlory(group.id);
+                        const isInitialized = savedBotName !== null;
+                        groupDataMap.set(group.id, {
+                            botName: savedBotName || group.guild_name || group.clan_id,
+                            isInitialized: isInitialized,
+                            isRunning: isRunning,
+                            glory: savedGlory,
+                            uptimeSeconds: savedUptime,
+                            gloryInterval: null,
+                            uptimeInterval: null,
+                            loadingTimeout: null
+                        });
+                        if (isInitialized && isRunning) { startUptimeCounter(group.id); }
+                    }
+                });
+                
+                const renderGroupCard = (group) => {
+                    const data = groupDataMap.get(group.id) || { glory: 0, uptimeSeconds: 0 };
+                    const savedStatus = getSavedGroupStatus(group.id);
+                    const isRunning = savedStatus === 'running' || group.status === 'running' || group.status === 'starting';
+                    const regionNames = { 'bd': 'Bangladesh', 'in': 'India', 'ind': 'India', 'indo': 'Indonesia', 'br': 'Brazil', 'me': 'Middle East', 'ghrab': 'MENA' };
+                    const flagMap = { 'bd': '🇧🇩', 'in': '🇮🇳', 'ind': '🇮🇳', 'indo': '🇮🇩', 'br': '🇧🇷', 'me': '🌍', 'ghrab': '🦅' };
+                    const regionKey = String(group.region || '').toLowerCase();
+                    const regionName = regionNames[regionKey] || String(group.region || '').toUpperCase();
+                    const flag = flagMap[regionKey] || '🏳️';
+                    const gloryValue = Number(group.glory_earned || data.glory || 0);
+                    const targetGlory = Number(group.target_glory || 100000);
+                    const goalPercent = Math.min(Math.floor((gloryValue / Math.max(targetGlory, 1)) * 100), 100);
+                    const displayName = group.guild_name || group.clan_id;
+                    const level = Number(group.level || 1);
+                    const membersCount = group.members || '--';
+                    const leaderName = group.leader_name || '--';
+                    const botCount = Number(group.bot_count || 4);
+                    const startedAt = group.started_at ? new Date(group.started_at).getTime() : Date.now();
+                    const uptimeSeconds = Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+                    const uptime = `${Math.floor(uptimeSeconds / 3600)}h ${Math.floor((uptimeSeconds % 3600) / 60)}m`;
+                    const lastMatch = isRunning ? 'Live' : '—';
+                    const statusText = isRunning ? 'RUNNING GROUP' : (group.status === 'completed' ? 'COMPLETED' : 'STOPPED');
+                    const statusClass = isRunning ? 'status-running' : (group.status === 'completed' ? 'status-completed' : 'status-stopped');
+                    const statusDot = isRunning ? 'bg-green-400' : (group.status === 'completed' ? 'bg-blue-400' : 'bg-red-400');
+                    return `<div class="group-card" id="group-card-${group.id}" data-target-glory="${targetGlory}">
+                        <div class="card-content">
+                            <div class="p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bot-avatar"><img src="${BOT_IMAGE_URL}" alt="Bot Avatar" onerror="this.src='https://via.placeholder.com/32?text=🤖'"></div>
+                                        <div>
+                                            <div class="flex items-center gap-2"><h3 class="text-lg font-bold text-white bot-name">${escapeHtml(displayName)}</h3><span class="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">LV.${level}</span></div>
+                                            <div class="flex items-center gap-2 mt-0.5 text-xs text-gray-400"><span>ID: ${group.clan_id}</span><span>|</span><span>${flag} ${regionName}</span><span>|</span><span>${botCount} ACCOUNTS</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="status-badge ${statusClass}"><span class="w-1.5 h-1.5 rounded-full ${statusDot} animate-pulse"></span> ${statusText}</div>
+                                </div>
+                                <div class="rounded-2xl border border-[#303528] bg-[#1c201d] p-4 mb-4">
+                                    <div class="flex items-center justify-between mb-4"><div class="text-xs tracking-widest text-gray-500 uppercase">Group ${group.id}</div><div class="text-xs text-gray-400"><i class="fas fa-star mr-1"></i> GLORY</div></div>
+                                    <div class="flex items-end justify-between"><div><div class="text-xs text-gray-500">Group</div><div class="text-2xl font-bold text-white mt-1">${escapeHtml(displayName)}</div></div><div class="text-3xl font-bold text-amber-300">${gloryValue.toLocaleString()}</div></div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                    <div class="rounded-xl border border-[#2a2e34] bg-[#151823] p-3"><div class="text-[10px] text-gray-500 uppercase">Region</div><div class="text-sm font-semibold text-white mt-1">${flag} ${regionName}</div></div>
+                                    <div class="rounded-xl border border-[#2a2e34] bg-[#151823] p-3"><div class="text-[10px] text-gray-500 uppercase">Accounts</div><div class="text-sm font-semibold text-white mt-1">${botCount}</div></div>
+                                    <div class="rounded-xl border border-[#2a2e34] bg-[#151823] p-3"><div class="text-[10px] text-gray-500 uppercase">Uptime</div><div class="text-sm font-semibold text-white mt-1">${uptime}</div></div>
+                                    <div class="rounded-xl border border-[#2a2e34] bg-[#151823] p-3"><div class="text-[10px] text-gray-500 uppercase">Last match</div><div class="text-sm font-semibold text-white mt-1">${lastMatch}</div></div>
+                                </div>
+                                <div class="mb-4"><div class="flex items-center justify-between text-xs text-gray-500 mb-2"><span>8H GOAL</span><span class="text-amber-400">${goalPercent}%</span></div><div class="w-full h-1.5 bg-black/60 rounded-full overflow-hidden"><div class="h-full bg-amber-400 rounded-full" style="width:${goalPercent}%"></div></div></div>
+                                <div class="button-group">
+                                    ${isRunning ? `<button onclick="restartGroup('${group.id}', this)" class="btn-restart flex items-center gap-1"><i class="fas fa-sync-alt text-xs"></i> Restart</button><button onclick="stopGroup('${group.id}', this)" class="btn-stop flex items-center gap-1"><i class="fas fa-stop text-xs"></i> Stop</button>` : `<button onclick="startGroup('${group.id}', this)" class="btn-restart flex items-center gap-1"><i class="fas fa-play text-xs"></i> Start</button>`}
+                                    <button onclick="deleteGroup('${group.id}', this)" class="btn-delete flex items-center gap-1"><i class="fas fa-trash text-xs"></i> Delete</button>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 pt-2"><button onclick="openDetails('${group.id}')" class="btn-outline flex items-center justify-center gap-1"><i class="fas fa-info-circle"></i> Details</button><button onclick="openSquadInfo('${group.id}')" class="btn-outline flex items-center justify-center gap-1"><i class="fas fa-users"></i> Squad Info</button></div>
+                                <div class="pt-2"><button onclick="openRefundConfirmModal('${group.id}')" class="btn-refund flex items-center justify-center gap-1 w-full"><i class="fas fa-undo-alt"></i> Refund Credit</button></div>
+                            </div>
+                        </div>
+                    </div>`;
+                };
+                
+                const groupsHtml = groups.map(renderGroupCard).join('');
+                if (groupsList) groupsList.innerHTML = groupsHtml;
+                if (groupsFull) groupsFull.innerHTML = groupsHtml;
+            } catch (e) { console.error('Failed to load groups:', e); showToast('Failed to load groups', 'error'); }
+        }
+
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+        async function refreshGroups() { await loadGroups(); await loadPendingOrders(); showToast('Refreshed', 'success'); }
+
+        async function restartGroup(groupId, button) {
+            if (!confirm('Restart this bot instance?')) return;
+            const originalHtml = button.innerHTML;
+            setButtonLoading(button, true);
+            try {
+                const res = await fetch(API.groupAction, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ group_id: parseInt(groupId), action: 'restart' }) });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast('✅ Bot restarted!', 'success');
+                    saveGroupStatus(groupId, 'running');
+                    const groupData = groupDataMap.get(parseInt(groupId));
+                    if (groupData) {
+                        if (groupData.gloryInterval) clearInterval(groupData.gloryInterval);
+                        if (groupData.uptimeInterval) clearInterval(groupData.uptimeInterval);
+                        groupData.isRunning = true;
+                        groupData.glory = 0;
+                        groupData.uptimeSeconds = 0;
+                        groupDataMap.set(parseInt(groupId), groupData);
+                        saveGlory(groupId, 0);
+                        saveUptime(groupId, 0);
+                        startUptimeCounter(groupId);
+                    }
+                    await loadGroups();
+                } else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+            finally { setButtonLoading(button, false, originalHtml); }
+        }
+
+        async function startGroup(groupId, button) {
+            if (!confirm('Start this bot instance?')) return;
+            const originalHtml = button.innerHTML;
+            setButtonLoading(button, true);
+            try {
+                const res = await fetch(API.groupAction, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ group_id: parseInt(groupId), action: 'start' }) });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast('✅ Bot started!', 'success');
+                    saveGroupStatus(groupId, 'running');
+                    const groupData = groupDataMap.get(parseInt(groupId));
+                    if (groupData) {
+                        groupData.isRunning = true;
+                        groupDataMap.set(parseInt(groupId), groupData);
+                        startUptimeCounter(groupId);
+                    }
+                    await loadGroups();
+                } else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+            finally { setButtonLoading(button, false, originalHtml); }
+        }
+
+        async function stopGroup(groupId, button) {
+            if (!confirm('Stop this bot instance?')) return;
+            const originalHtml = button.innerHTML;
+            setButtonLoading(button, true);
+            try {
+                const res = await fetch(API.groupAction, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ group_id: parseInt(groupId), action: 'stop' }) });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast('✅ Bot stopped!', 'success');
+                    saveGroupStatus(groupId, 'stopped');
+                    const groupData = groupDataMap.get(parseInt(groupId));
+                    if (groupData) {
+                        if (groupData.gloryInterval) clearInterval(groupData.gloryInterval);
+                        if (groupData.uptimeInterval) clearInterval(groupData.uptimeInterval);
+                        groupData.isRunning = false;
+                        groupDataMap.set(parseInt(groupId), groupData);
+                    }
+                    await loadGroups();
+                    await refreshUserCredits();
+                } else { showToast(data.error || 'Failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+            finally { setButtonLoading(button, false, originalHtml); }
+        }
+
+        async function deleteGroup(groupId, button) {
+            if (!confirm('Delete this bot instance? Credits will NOT be refunded.')) return;
+            const originalHtml = button.innerHTML;
+            setButtonLoading(button, true);
+            try {
+                const res = await fetch(API.groupAction, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ group_id: parseInt(groupId), action: 'delete' }) });
+                if (res.ok) {
+                    const groupData = groupDataMap.get(parseInt(groupId));
+                    if (groupData) {
+                        if (groupData.gloryInterval) clearInterval(groupData.gloryInterval);
+                        if (groupData.uptimeInterval) clearInterval(groupData.uptimeInterval);
+                    }
+                    removeSavedBotName(groupId);
+                    removeSavedUptime(groupId);
+                    removeSavedGlory(groupId);
+                    removeSavedGroupStatus(groupId);
+                    groupDataMap.delete(parseInt(groupId));
+                    showToast('Bot deleted', 'success');
+                    await loadGroups();
+                    await refreshUserCredits();
+                } else { showToast('Failed to delete', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); }
+            finally { setButtonLoading(button, false, originalHtml); }
+        }
+
+        async function loadTransactions() {
+            try {
+                const res = await fetch(API.transactions);
+                const txs = await res.json();
+                const container = document.getElementById('transactions-list');
+                if (!txs || txs.length === 0) { container.innerHTML = `<div class="text-center py-8 text-gray-500"><i class="fas fa-receipt text-4xl mb-2 opacity-50"></i><p>No transactions</p></div>`; return; }
+                container.innerHTML = txs.map(tx => { const statusClass = tx.status === 'completed' ? 'bg-green-500/20 text-green-400' : tx.status === 'pending' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'; const date = new Date(tx.created_at).toLocaleString(); return `<div class="bg-[#1e2130] rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"><div><p class="font-mono text-xs text-gray-500">${tx.id}</p><p class="text-sm">$${tx.amount?.toFixed(2) || '0.00'} → ${tx.basic_credits || 0} Basic / ${tx.premium_credits || 0} Premium</p><p class="text-xs text-gray-500">${date}</p></div><span class="text-xs px-2 py-1 rounded-full ${statusClass}">${tx.status}</span></div>`; }).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        function adjustCredits(type, delta) { const input = document.getElementById(`coupon-${type}`); let val = parseInt(input.value) || 0; const max = type === 'basic' ? 100 : 20; val = Math.max(0, Math.min(max, val + delta)); input.value = val; }
+
+        async function createCoupon() {
+            const basic = parseInt(document.getElementById('coupon-basic').value) || 0;
+            const premium = parseInt(document.getElementById('coupon-premium').value) || 0;
+            if (basic === 0 && premium === 0) { showToast('Select at least 1 credit', 'error'); return; }
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Creating...';
+            try {
+                const res = await fetch(API.createCoupon, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ basic_credits: basic, premium_credits: premium }) });
+                const data = await res.json();
+                if (res.ok && data.success) { showToast(`Code created: ${data.coupon.code}`, 'success'); document.getElementById('coupon-basic').value = 0; document.getElementById('coupon-premium').value = 0; await loadCoupons(); await refreshUserCredits(); }
+                else { showToast(data.error || 'Creation failed', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); } finally { btn.disabled = false; btn.innerHTML = originalText; }
+        }
+
+        async function redeemCoupon() {
+            const code = document.getElementById('coupon-code').value.trim();
+            if (!code) { showToast('Enter a code', 'error'); return; }
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Redeeming...';
+            try {
+                const res = await fetch(API.redeemCoupon, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code }) });
+                const data = await res.json();
+                if (res.ok && data.success) { showToast(`Redeemed! +${data.basic_credits || 0} Basic, +${data.premium_credits || 0} Premium`, 'success'); document.getElementById('coupon-code').value = ''; await refreshUserCredits(); await loadCoupons(); }
+                else { showToast(data.error || 'Invalid code', 'error'); }
+            } catch (e) { showToast('Network error', 'error'); } finally { btn.disabled = false; btn.innerHTML = originalText; }
+        }
+
+        async function loadCoupons() {
+            try {
+                const res = await fetch(API.myCoupons);
+                const coupons = await res.json();
+                const container = document.getElementById('my-coupons-list');
+                if (!coupons || coupons.length === 0) { container.innerHTML = `<div class="text-center py-6 text-gray-500"><i class="fas fa-ticket-alt text-3xl mb-2 opacity-50"></i><p>No codes created</p></div>`; return; }
+                container.innerHTML = coupons.map(c => `<div class="bg-[#1e2130] rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"><div><code class="font-mono text-sm text-blue-400">${c.code}</code><p class="text-xs text-gray-500 mt-1">${c.basic_credits || 0} Basic / ${c.premium_credits || 0} Premium</p></div><span class="text-xs px-2 py-1 rounded-full ${c.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}">${c.status}</span></div>`).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function changePassword() {
+            const current = document.getElementById('current-pw').value;
+            const newPw = document.getElementById('new-pw').value;
+            const confirm = document.getElementById('confirm-pw').value;
+            const msgBox = document.getElementById('pw-message');
+            if (!current || !newPw || !confirm) { msgBox.className = 'text-sm text-red-400 mt-2'; msgBox.innerHTML = 'All fields are required'; msgBox.classList.remove('hidden'); return; }
+            if (newPw.length < 6) { msgBox.className = 'text-sm text-red-400 mt-2'; msgBox.innerHTML = 'Password must be at least 6 characters'; msgBox.classList.remove('hidden'); return; }
+            if (newPw !== confirm) { msgBox.className = 'text-sm text-red-400 mt-2'; msgBox.innerHTML = 'Passwords do not match'; msgBox.classList.remove('hidden'); return; }
+            try {
+                const res = await fetch(API.changePassword, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ current_password: current, new_password: newPw }) });
+                const data = await res.json();
+                if (res.ok) { msgBox.className = 'text-sm text-green-400 mt-2'; msgBox.innerHTML = 'Password changed successfully!'; msgBox.classList.remove('hidden'); document.getElementById('current-pw').value = ''; document.getElementById('new-pw').value = ''; document.getElementById('confirm-pw').value = ''; setTimeout(() => msgBox.classList.add('hidden'), 3000); }
+                else { msgBox.className = 'text-sm text-red-400 mt-2'; msgBox.innerHTML = data.error || 'Failed to change password'; msgBox.classList.remove('hidden'); }
+            } catch (e) { msgBox.className = 'text-sm text-red-400 mt-2'; msgBox.innerHTML = 'Network error'; msgBox.classList.remove('hidden'); }
+        }
+
+        let currentTab = 'dashboard';
+        function switchTab(tab) {
+            currentTab = tab;
+            // Show normal content when switching tabs
+            showNormalContent();
+            
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(item => { item.classList.remove('nav-item-active'); item.classList.remove('text-blue-400'); item.classList.add('text-gray-400'); });
+            const sidebarBtn = document.getElementById(`sidebar-${tab}`);
+            if (sidebarBtn) { sidebarBtn.classList.add('nav-item-active'); sidebarBtn.classList.remove('text-gray-400'); }
+            document.querySelectorAll('.mob-nav-item')?.forEach(item => { item.classList.remove('text-blue-400'); item.classList.add('text-gray-400'); });
+            const mobBtn = document.getElementById(`mob-${tab}`);
+            if (mobBtn) { mobBtn.classList.remove('text-gray-400'); mobBtn.classList.add('text-blue-400'); }
+            if (tab === 'groups') { loadGroups(); loadPendingOrders(); }
+            if (tab === 'transactions') loadTransactions();
+            if (tab === 'coupons') loadCoupons();
+        }
+
+        window.switchTab = switchTab;
+        window.refreshGroups = refreshGroups;
+        window.restartGroup = restartGroup;
+        window.startGroup = startGroup;
+        window.stopGroup = stopGroup;
+        window.deleteGroup = deleteGroup;
+        window.openRefundConfirmModal = openRefundConfirmModal;
+        window.closeRefundConfirmModal = closeRefundConfirmModal;
+        window.closeConfirmModal = closeConfirmModal;
+        window.adjustCredits = adjustCredits;
+        window.createCoupon = createCoupon;
+        window.redeemCoupon = redeemCoupon;
+        window.changePassword = changePassword;
+        window.openTelegramBuy = openTelegramBuy;
+        window.showBuyCreditsOnly = showBuyCreditsOnly;
+
+        init();
+    </script>
+</body>
+</html>
